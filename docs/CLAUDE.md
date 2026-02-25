@@ -79,3 +79,7 @@ Every data-fetching component needs 3 states:
 - Do NOT use margin-left, margin-right, padding-left, padding-right, left, right, text-left, text-right anywhere. Use logical properties.
 - Do NOT create components with default exports (except page.tsx and layout.tsx).
 - When using next-intl, always use the useTranslations() hook. Never hardcode user-facing strings.
+
+## Progress
+
+Check progress.txt for what's been completed. Update it after finishing each session.

@@ -1,0 +1,59 @@
+{
+  "common": {
+    "appName": "Benzina",
+    "tagline": "Find gas stations across Lebanon",
+    "searchPlaceholder": "Search stations, brands...",
+    "allFuels": "All Fuels",
+    "stationsNearby": "{count} stations nearby",
+    "noStations": "No stations found",
+    "expandSearch": "Try expanding your search radius",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again"
+  },
+  "fuel": {
+    "95": "Gasoline 95",
+    "98": "Gasoline 98",
+    "diesel": "Diesel",
+    "lpg": "LPG"
+  },
+  "station": {
+    "navigate": "Navigate",
+    "share": "Share",
+    "call": "Call",
+    "open24h": "Open 24 hours",
+    "openNow": "Open now",
+    "closed": "Closed",
+    "distance": "{distance} away",
+    "fuelTypes": "Fuel types",
+    "amenities": "Amenities",
+    "address": "Address",
+    "phone": "Phone"
+  },
+  "prices": {
+    "title": "Fuel Prices",
+    "effectiveDate": "Effective: {date}",
+    "source": "Source: DGO",
+    "perUnit": "per {unit}",
+    "note": "Prices set weekly by the Directorate General of Oil (DGO)"
+  },
+  "nav": {
+    "map": "Map",
+    "list": "List",
+    "prices": "Prices",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "fuelPreference": "Preferred fuel",
+    "defaultRadius": "Default radius",
+    "darkMode": "Dark mode",
+    "about": "About Benzina"
+  },
+  "welcome": {
+    "title": "Welcome to Benzina",
+    "subtitle": "Find the nearest gas station across all brands in Lebanon",
+    "getStarted": "Find Stations"
+  }
+}

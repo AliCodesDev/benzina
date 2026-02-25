@@ -1,0 +1,13 @@
+# Benzina — Progress Log
+
+## Completed
+- [x] Session 1: Project scaffold (Next.js, Tailwind, shadcn)
+- [x] Session 2: i18n setup (en/ar, RTL, middleware, translation files)
+
+## Current
+- Session 3: Supabase client setup + types + constants
+
+## Notes
+- React Compiler enabled
+- /ar works with dir="rtl" ✓
+

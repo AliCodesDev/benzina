@@ -6,6 +6,14 @@
 - [x] Session 3: Supabase client setup + types + constants
 - [x] Session 4: Header component with language switcher
 - [x] Session 5: DGO station scraper (scripts/scrape-dgo-stations.ts)
+- [x] Session 6: Full data pipeline (OSM fetch, merge, seed)
+  - fetch-osm-stations.ts: 158 stations from Overpass API (Greater Beirut bbox)
+  - merge-stations.ts: distance-based matching (100m threshold) of DGO + OSM data
+    → 316 merged stations (113 matched pairs, 184 DGO-only, 45 OSM-only)
+    → Brand inference via regex (TotalEnergies, Medco, IPT, Coral, Hypco, etc.)
+    → Unique slug generation with deduplication
+  - seed-db.ts: batch upsert (50/batch) to Supabase with PostGIS POINT geometry
+  - Utility modules: geo.ts (haversine), supabase-admin.ts (service role client)
 
 ## Current
 - Ready for next feature (map, station list, or similar)
@@ -16,4 +24,6 @@
 - Header: sticky, Instrument Serif italic logo, EN/ع locale toggle
 - shadcn button component installed
 - DGO scraper: 2499 total stations, 297 in Greater Beirut bounding box
+- Data files in data/: dgo-stations-raw.json, osm-stations-raw.json, merged-stations.json
+- 316 stations total in merged dataset, ready in Supabase
 

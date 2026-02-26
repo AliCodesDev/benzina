@@ -3,11 +3,15 @@
 ## Completed
 - [x] Session 1: Project scaffold (Next.js, Tailwind, shadcn)
 - [x] Session 2: i18n setup (en/ar, RTL, middleware, translation files)
+- [x] Session 3: Supabase client setup + types + constants
+- [x] Session 4: Header component with language switcher
 
 ## Current
-- Session 3: Supabase client setup + types + constants
+- Ready for next feature (map, station list, or similar)
 
 ## Notes
 - React Compiler enabled
 - /ar works with dir="rtl" ✓
+- Header: sticky, Instrument Serif italic logo, EN/ع locale toggle
+- shadcn button component installed
 

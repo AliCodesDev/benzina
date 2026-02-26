@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { DM_Sans, IBM_Plex_Sans_Arabic } from "next/font/google";
+import {
+  DM_Sans,
+  IBM_Plex_Sans_Arabic,
+  Instrument_Serif,
+} from "next/font/google";
+import { Header } from "@/components/layout/header";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
+});
+
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
 });
 
 const ibmPlexArabic = IBM_Plex_Sans_Arabic({
@@ -39,8 +50,13 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={isArabic ? "rtl" : "ltr"}>
-      <body className={`${fontClass} font-sans antialiased`}>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      <body
+        className={`${fontClass} ${instrumentSerif.variable} font-sans antialiased`}
+      >
+        <NextIntlClientProvider>
+          <Header />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

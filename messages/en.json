@@ -9,7 +9,8 @@
     "expandSearch": "Try expanding your search radius",
     "loading": "Loading...",
     "error": "Something went wrong",
-    "retry": "Try again"
+    "retry": "Try again",
+    "comingSoon": "Station finder coming soon"
   },
   "fuel": {
     "95": "Gasoline 95",

@@ -5,6 +5,7 @@
 - [x] Session 2: i18n setup (en/ar, RTL, middleware, translation files)
 - [x] Session 3: Supabase client setup + types + constants
 - [x] Session 4: Header component with language switcher
+- [x] Session 5: DGO station scraper (scripts/scrape-dgo-stations.ts)
 
 ## Current
 - Ready for next feature (map, station list, or similar)
@@ -14,4 +15,5 @@
 - /ar works with dir="rtl" ✓
 - Header: sticky, Instrument Serif italic logo, EN/ع locale toggle
 - shadcn button component installed
+- DGO scraper: 2499 total stations, 297 in Greater Beirut bounding box
 

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createServerClient } from '@/lib/supabase/server';
-import type { NearbyStation } from '@/types/station';
 
 import { BEIRUT_CENTER, DEFAULT_RADIUS_KM } from '@/lib/constants';
 
@@ -48,21 +47,14 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerClient();
 
-    const rpcParams: Record<string, unknown> = {
+    const { data, error } = await supabase.rpc('nearby_stations', {
       lat,
       lng,
       radius_km: radius,
       result_limit: limit,
-    };
-
-    if (fuel) {
-      rpcParams.fuel_filter = fuel.split(',');
-    }
-    if (brand) {
-      rpcParams.brand_filter = brand;
-    }
-
-    const { data, error } = await supabase.rpc('nearby_stations', rpcParams);
+      ...(fuel ? { fuel_filter: fuel.split(',') } : {}),
+      ...(brand ? { brand_filter: brand } : {}),
+    });
 
     if (error) {
       return NextResponse.json(
@@ -71,7 +63,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let stations = (data ?? []) as NearbyStation[];
+    let stations = data ?? [];
 
     // Additional text search filter
     if (q) {
@@ -79,7 +71,7 @@ export async function GET(request: NextRequest) {
       stations = stations.filter(
         (s) =>
           s.name_en.toLowerCase().includes(query) ||
-          s.brand.toLowerCase().includes(query),
+          (s.brand?.toLowerCase().includes(query) ?? false),
       );
     }
 

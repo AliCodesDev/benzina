@@ -32,9 +32,9 @@ describe('GET /api/stations', () => {
         id: '1',
         name_en: 'Test Station',
         brand: 'medco',
-        distance_km: 1.5,
-        lat: 33.89,
-        lng: 35.5,
+        latitude: 33.89,
+        longitude: 35.5,
+        distance_meters: 1500,
       },
     ];
     mockRpc.mockResolvedValue({ data: mockStations, error: null });
@@ -88,8 +88,8 @@ describe('GET /api/stations', () => {
 
   it('filters by search query', async () => {
     const mockStations = [
-      { id: '1', name_en: 'Medco Downtown', brand: 'medco', distance_km: 1 },
-      { id: '2', name_en: 'IPT Highway', brand: 'ipt', distance_km: 2 },
+      { id: '1', name_en: 'Medco Downtown', brand: 'medco', distance_meters: 1000 },
+      { id: '2', name_en: 'IPT Highway', brand: 'ipt', distance_meters: 2000 },
     ];
     mockRpc.mockResolvedValue({ data: mockStations, error: null });
 

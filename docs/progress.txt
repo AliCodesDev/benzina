@@ -14,6 +14,11 @@
     → Unique slug generation with deduplication
   - seed-db.ts: batch upsert (50/batch) to Supabase with PostGIS POINT geometry
   - Utility modules: geo.ts (haversine), supabase-admin.ts (service role client)
+- [x] Session 7: Fuel prices scraper (scripts/scrape-dgo-prices.ts)
+  - CLI-based: npx tsx scripts/scrape-dgo-prices.ts --95=... --98=... --diesel=... --lpg=...
+  - Optional --date=YYYY-MM-DD flag (defaults to today)
+  - Upserts to fuel_prices table on (fuel_type, effective_date)
+  - DGO website scraping stub ready for future implementation
 
 ## Current
 - Ready for next feature (map, station list, or similar)

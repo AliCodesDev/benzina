@@ -8,6 +8,7 @@ import {
 } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { routing } from "@/i18n/routing";
+import "mapbox-gl/dist/mapbox-gl.css";
 import "../globals.css";
 
 const dmSans = DM_Sans({

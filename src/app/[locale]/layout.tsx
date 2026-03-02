@@ -6,6 +6,7 @@ import {
   IBM_Plex_Sans_Arabic,
   Instrument_Serif,
 } from "next/font/google";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
 import { routing } from "@/i18n/routing";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -57,6 +58,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <Header />
           {children}
+          <BottomNav />
         </NextIntlClientProvider>
       </body>
     </html>

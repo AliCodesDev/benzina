@@ -29,7 +29,14 @@
     "fuelTypes": "أنواع الوقود",
     "amenities": "الخدمات",
     "address": "العنوان",
-    "phone": "الهاتف"
+    "phone": "الهاتف",
+    "operatingHours": "ساعات العمل",
+    "copied": "تم النسخ!",
+    "notFound": "المحطة غير موجودة",
+    "notFoundDescription": "هذه المحطة غير موجودة أو ربما تمت إزالتها.",
+    "backToMap": "العودة إلى الخريطة",
+    "currentPrices": "الأسعار الحالية",
+    "viewOnMap": "عرض على الخريطة"
   },
   "prices": {
     "title": "أسعار المحروقات",

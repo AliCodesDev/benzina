@@ -29,7 +29,14 @@
     "fuelTypes": "Fuel types",
     "amenities": "Amenities",
     "address": "Address",
-    "phone": "Phone"
+    "phone": "Phone",
+    "operatingHours": "Operating hours",
+    "copied": "Copied!",
+    "notFound": "Station not found",
+    "notFoundDescription": "This station doesn't exist or may have been removed.",
+    "backToMap": "Back to map",
+    "currentPrices": "Current Prices",
+    "viewOnMap": "View on map"
   },
   "prices": {
     "title": "Fuel Prices",

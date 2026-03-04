@@ -5,13 +5,13 @@ import type { FuelType } from '@/types/station';
 
 interface PreferencesState {
   locale: 'en' | 'ar';
-  preferredFuel: FuelType | null;
+  preferredFuels: FuelType[];
   defaultRadius: number;
   currency: 'LBP' | 'USD' | 'both';
   theme: 'light' | 'dark' | 'system';
   hasCompletedOnboarding: boolean;
   setLocale: (locale: 'en' | 'ar') => void;
-  setPreferredFuel: (fuel: FuelType | null) => void;
+  setPreferredFuels: (fuels: FuelType[]) => void;
   setDefaultRadius: (radius: number) => void;
   setCurrency: (currency: 'LBP' | 'USD' | 'both') => void;
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
@@ -22,13 +22,13 @@ export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
       locale: 'en',
-      preferredFuel: null,
+      preferredFuels: [],
       defaultRadius: 5,
       currency: 'both',
       theme: 'system',
       hasCompletedOnboarding: false,
       setLocale: (locale) => set({ locale }),
-      setPreferredFuel: (fuel) => set({ preferredFuel: fuel }),
+      setPreferredFuels: (fuels) => set({ preferredFuels: fuels }),
       setDefaultRadius: (radius) => set({ defaultRadius: radius }),
       setCurrency: (currency) => set({ currency }),
       setTheme: (theme) => set({ theme }),

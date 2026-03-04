@@ -9,6 +9,7 @@ import {
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
 import { PriceTicker } from "@/components/prices/price-ticker";
+import { WelcomeModal } from "@/components/onboarding/welcome-modal";
 import { routing } from "@/i18n/routing";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "../globals.css";
@@ -57,6 +58,7 @@ export default async function LocaleLayout({
         className={`${fontClass} ${instrumentSerif.variable} font-sans antialiased`}
       >
         <NextIntlClientProvider>
+          <WelcomeModal />
           <PriceTicker />
           <Header />
           {children}

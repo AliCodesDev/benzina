@@ -79,10 +79,49 @@
     → Cache-Control: public, s-maxage=86400 (24h CDN cache)
   - New i18n keys (en + ar): operatingHours, copied, notFound, notFoundDescription, backToMap, currentPrices, viewOnMap
 
+- [x] Session 10: Fuel prices feature (API + page + ticker)
+  - Fixed src/types/price.ts: aligned FuelPrice interface with database.ts fuel_prices.Row
+    → Removed stale fields (station_id, price_usd, reported_at)
+    → Added price_unit, effective_date, source
+  - API route: GET /api/prices
+    → Queries fuel_prices, deduplicates to latest per fuel_type
+    → Returns { prices: FuelPrice[], lastUpdated: string }
+    → Cache-Control: public, s-maxage=3600
+  - Prices page: src/app/[locale]/prices/page.tsx (SSR)
+    → Direct Supabase query, generateMetadata with SEO description
+    → 2x2 color-coded price cards (blue=95, purple=98, amber=diesel, green=lpg)
+    → LBP price (large, comma-formatted) + USD conversion
+    → Effective date, "Source: DGO" note, weekly update disclaimer
+  - Price ticker: src/components/prices/price-ticker.tsx (client component)
+    → Fetches /api/prices on mount, dark bar (bg-slate-900, text-amber-400)
+    → CSS @keyframes ticker animation with duplicated content for seamless loop
+    → Compact 32px height, shows "fuel_name: price LBP" separated by dots
+  - Layout: added PriceTicker above Header in [locale]/layout.tsx
+  - CSS: added .animate-ticker keyframes to globals.css
+  - All translations reused from existing prices.* and fuel.* keys (no new keys needed)
+
+- [x] Session 10: Search improvements (text matching + autocomplete)
+  - API route: enhanced /api/stations text search when q param provided
+    → Matches across 5 fields: name_en, name_ar, brand, address_en, address_ar
+    → Arabic query detection via Unicode range [\u0600-\u06FF]
+    → Relevance scoring: exact brand (100) → brand starts-with (90) → name match (65-80) → brand contains (50) → address match (25-30)
+    → Arabic queries prioritize name_ar and address_ar in relevance ranking
+  - Search input: autocomplete dropdown with suggestions
+    → Independent fetch to /api/stations?q=...&radius=200&limit=5 (country-wide)
+    → 300ms debounce with abort controller for cancellation
+    → Up to 5 suggestions with station name, brand, and address
+    → Keyboard navigation (Arrow Up/Down, Enter to select, Escape to close)
+    → Selecting navigates to /station/[slug] via i18n useRouter
+    → Locale-aware: shows name_ar/address_ar when locale is ar
+    → ARIA combobox/listbox attributes for accessibility
+    → Closes on blur (only when focus leaves container) and Escape
+
 ## Current
 - Core map + list + filters experience is functional
 - Station detail pages with SSR, OG images, and sharing are complete
-- Next: fuel prices page, settings page, onboarding
+- Fuel prices page, ticker, and API are complete
+- Search with autocomplete and relevance ranking is complete
+- Next: settings page, onboarding
 
 ## Notes
 - React Compiler enabled
@@ -94,6 +133,7 @@
 - 316 stations total in merged dataset, ready in Supabase
 - Supabase Database types now fully typed (stations, fuel_prices, scrape_logs, nearby_stations RPC)
 - Header height ~53px (used in h-[calc(100dvh-53px)] for full viewport layout)
-- API surface: GET /api/stations (list), GET /api/stations/[id] (detail), GET /api/og (OG image)
+- API surface: GET /api/stations (list+search), GET /api/stations/[id] (detail), GET /api/prices, GET /api/og (OG image)
 - OG images are edge-rendered with Satori (inline styles only, no external icon libs)
+- Price ticker renders above header on all pages (client component, fetches /api/prices)
 

@@ -5,6 +5,55 @@ import { createServerClient } from '@/lib/supabase/server';
 import { BEIRUT_CENTER, DEFAULT_RADIUS_KM } from '@/lib/constants';
 
 const DEFAULT_LIMIT = 50;
+const ARABIC_REGEX = /[\u0600-\u06FF]/;
+
+type NearbyRow = {
+  id: string;
+  slug: string;
+  name_en: string;
+  name_ar: string | null;
+  brand: string | null;
+  brand_slug: string | null;
+  latitude: number;
+  longitude: number;
+  address_en: string | null;
+  address_ar: string | null;
+  phone: string | null;
+  fuel_types: string[];
+  amenities: string[] | null;
+  is_24h: boolean;
+  status: string;
+  distance_meters: number;
+};
+
+function matchScore(station: NearbyRow, query: string, isArabic: boolean): number {
+  const q = query.toLowerCase();
+
+  // Exact brand match → highest
+  if (station.brand?.toLowerCase() === q) return 100;
+
+  // Brand starts with query
+  if (station.brand?.toLowerCase().startsWith(q)) return 90;
+
+  // Name match (prioritize Arabic fields for Arabic queries)
+  if (isArabic) {
+    if (station.name_ar?.includes(query)) return 80;
+    if (station.address_ar?.includes(query)) return 60;
+  }
+
+  if (station.name_en.toLowerCase().startsWith(q)) return 75;
+  if (station.name_en.toLowerCase().includes(q)) return 70;
+  if (station.name_ar?.includes(query)) return 65;
+
+  // Brand contains
+  if (station.brand?.toLowerCase().includes(q)) return 50;
+
+  // Address match
+  if (station.address_en?.toLowerCase().includes(q)) return 30;
+  if (station.address_ar?.includes(query)) return 25;
+
+  return 0;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -65,13 +114,27 @@ export async function GET(request: NextRequest) {
 
     let stations = data ?? [];
 
-    // Additional text search filter
+    // Text search: filter across name_en, name_ar, brand, address_en, address_ar
     if (q) {
       const query = q.toLowerCase();
-      stations = stations.filter(
-        (s) =>
-          s.name_en.toLowerCase().includes(query) ||
-          (s.brand?.toLowerCase().includes(query) ?? false),
+      const isArabic = ARABIC_REGEX.test(q);
+
+      stations = stations.filter((s) => {
+        const fields = [
+          s.name_en,
+          s.name_ar,
+          s.brand,
+          s.address_en,
+          s.address_ar,
+        ];
+        return fields.some((field) =>
+          field?.toLowerCase().includes(query),
+        );
+      });
+
+      // Sort by relevance: exact brand > name > address
+      stations.sort(
+        (a, b) => matchScore(b, q, isArabic) - matchScore(a, q, isArabic),
       );
     }
 

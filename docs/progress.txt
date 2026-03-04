@@ -56,9 +56,33 @@
   - formatDistance() utility: meters → "350m" or "1.2 km"
   - mapbox-gl CSS imported in root layout
 
+- [x] Session 9: Station detail page, API endpoint, and OG image generation
+  - API route: GET /api/stations/[id] by UUID or slug
+    → Parses PostGIS geography → lat/lng floats
+    → Fetches latest fuel prices, deduplicates per fuel_type
+    → Cache-Control: public, s-maxage=300
+    → Returns { station, prices } or 404
+  - Station detail page: src/app/[locale]/station/[id]/page.tsx (SSR)
+    → Direct Supabase queries (no self-fetch), generateMetadata with OG image
+    → Locale-aware name/address (Arabic if locale=ar and name_ar exists)
+    → Brand color accent bar, open/closed status, 24h indicator
+    → Fuel badges, address card, phone link, operating hours, amenities badges
+    → Fuel prices grid with LBP + USD conversion (LBP_USD_RATE = 89,500)
+    → "View on Map" link back to home with lat/lng/zoom params
+  - not-found.tsx: translated 404 page with MapPin icon and back-to-map button
+  - navigate-button.tsx: client component, opens Google Maps directions
+  - share-button.tsx: client component, Web Share API with clipboard fallback + "Copied!" state
+  - Dynamic OG image: GET /api/og?slug= (Edge runtime, next/og ImageResponse)
+    → 1200x630 PNG with dark background, brand-color accent bar
+    → Benzina logo, brand name, station name, address with MapPin icon
+    → Fuel type badge pills (blue/purple/amber/green), "Open 24h" badge
+    → Cache-Control: public, s-maxage=86400 (24h CDN cache)
+  - New i18n keys (en + ar): operatingHours, copied, notFound, notFoundDescription, backToMap, currentPrices, viewOnMap
+
 ## Current
 - Core map + list + filters experience is functional
-- Next: station detail page, fuel prices page, settings page, onboarding
+- Station detail pages with SSR, OG images, and sharing are complete
+- Next: fuel prices page, settings page, onboarding
 
 ## Notes
 - React Compiler enabled
@@ -70,4 +94,6 @@
 - 316 stations total in merged dataset, ready in Supabase
 - Supabase Database types now fully typed (stations, fuel_prices, scrape_logs, nearby_stations RPC)
 - Header height ~53px (used in h-[calc(100dvh-53px)] for full viewport layout)
+- API surface: GET /api/stations (list), GET /api/stations/[id] (detail), GET /api/og (OG image)
+- OG images are edge-rendered with Satori (inline styles only, no external icon libs)
 

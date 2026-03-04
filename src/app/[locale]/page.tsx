@@ -53,7 +53,7 @@ export default function HomePage() {
           {/* Mobile bottom sheet */}
           <div
             className={cn(
-              'absolute inset-x-0 bottom-0 z-10 flex flex-col bg-background rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] transition-[max-height] duration-300 md:hidden',
+              'absolute inset-x-0 bottom-0 z-10 flex flex-col bg-background rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.4)] transition-[max-height] duration-300 md:hidden',
               sheetExpanded ? 'max-h-[70dvh]' : 'max-h-[40dvh]',
             )}
           >

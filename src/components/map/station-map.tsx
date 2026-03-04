@@ -4,8 +4,9 @@ import mapboxgl from 'mapbox-gl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { MAPBOX_STYLE } from '@/lib/constants';
+import { MAPBOX_STYLE, MAPBOX_STYLE_DARK } from '@/lib/constants';
 import { useMapStore } from '@/stores/use-map-store';
+import { usePreferencesStore } from '@/stores/use-preferences-store';
 import type { NearbyStation } from '@/types/station';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
@@ -35,10 +36,36 @@ function toGeoJSON(stations: NearbyStation[]): GeoJSON.FeatureCollection {
   };
 }
 
+function useIsDark() {
+  const theme = usePreferencesStore((s) => s.theme);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      setIsDark(true);
+      return;
+    }
+    if (theme === 'light') {
+      setIsDark(false);
+      return;
+    }
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDark(mq.matches);
+    function onChange(e: MediaQueryListEvent) {
+      setIsDark(e.matches);
+    }
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [theme]);
+
+  return isDark;
+}
+
 export function StationMap({ stations }: StationMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const isDark = useIsDark();
 
   const center = useMapStore((s) => s.center);
   const zoom = useMapStore((s) => s.zoom);
@@ -53,7 +80,7 @@ export function StationMap({ stations }: StationMapProps) {
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: MAPBOX_STYLE,
+      style: isDark ? MAPBOX_STYLE_DARK : MAPBOX_STYLE,
       center: [center.lng, center.lat],
       zoom,
     });
@@ -84,7 +111,7 @@ export function StationMap({ stations }: StationMapProps) {
             '#94a3b8',
           ],
           'circle-stroke-width': 2,
-          'circle-stroke-color': '#ffffff',
+          'circle-stroke-color': isDark ? '#1e293b' : '#ffffff',
         },
       });
 
@@ -141,6 +168,45 @@ export function StationMap({ stations }: StationMapProps) {
       map.flyTo({ center: [station.longitude, station.latitude], zoom: 15 });
     }
   }, [selectedStationId, stations, loaded]);
+
+  // Switch map style when theme changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded) return;
+
+    const newStyle = isDark ? MAPBOX_STYLE_DARK : MAPBOX_STYLE;
+    map.setStyle(newStyle);
+
+    map.once('style.load', () => {
+      map.addSource('stations', {
+        type: 'geojson',
+        data: toGeoJSON(stations),
+      });
+
+      map.addLayer({
+        id: 'station-circles',
+        type: 'circle',
+        source: 'stations',
+        paint: {
+          'circle-radius': 8,
+          'circle-color': [
+            'match',
+            ['get', 'brand_slug'],
+            'total', '#e11d48',
+            'totalenergies', '#e11d48',
+            'medco', '#2563eb',
+            'ipt', '#16a34a',
+            'coral', '#f97316',
+            'hypco', '#7c3aed',
+            '#94a3b8',
+          ],
+          'circle-stroke-width': 2,
+          'circle-stroke-color': isDark ? '#1e293b' : '#ffffff',
+        },
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDark]);
 
   return (
     <div className="relative size-full">

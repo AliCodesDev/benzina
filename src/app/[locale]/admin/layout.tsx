@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Lock } from 'lucide-react';
+import { Toaster } from '@/components/ui/sonner';
 
 export default function AdminLayout({
   children,
@@ -103,5 +104,10 @@ export default function AdminLayout({
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Toaster />
+    </>
+  );
 }

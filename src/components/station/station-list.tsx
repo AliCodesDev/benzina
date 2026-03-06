@@ -6,6 +6,7 @@ import { StationCard } from '@/components/station/station-card';
 import { EmptyState } from '@/components/ui/empty-state';
 import { ErrorState } from '@/components/ui/error-state';
 import { StationCardSkeleton } from '@/components/ui/station-card-skeleton';
+import { useFilterStore } from '@/stores/use-filter-store';
 import { useMapStore } from '@/stores/use-map-store';
 import type { NearbyStation } from '@/types/station';
 
@@ -21,6 +22,7 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
   const selectedStationId = useMapStore((s) => s.selectedStationId);
   const selectStation = useMapStore((s) => s.selectStation);
   const flyTo = useMapStore((s) => s.flyTo);
+  const setRadius = useFilterStore((s) => s.setRadius);
 
   if (loading) {
     return (
@@ -41,6 +43,8 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
       <EmptyState
         message={t('noStations')}
         suggestion={t('expandSearch')}
+        actionLabel={t('expandTo10km')}
+        onAction={() => setRadius(10)}
       />
     );
   }

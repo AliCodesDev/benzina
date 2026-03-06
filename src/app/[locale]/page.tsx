@@ -2,11 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { MapPin, RefreshCw, X } from 'lucide-react';
 
 import { FilterBar } from '@/components/filters/filter-bar';
 import { SortToggle } from '@/components/filters/sort-toggle';
 import { StationMap } from '@/components/map/station-map';
 import { StationList } from '@/components/station/station-list';
+import { Button } from '@/components/ui/button';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { useStations } from '@/hooks/use-stations';
 import { cn } from '@/lib/utils';
@@ -15,7 +17,7 @@ import { usePreferencesStore } from '@/stores/use-preferences-store';
 
 export default function HomePage() {
   const t = useTranslations('common');
-  const { latitude, longitude } = useGeolocation();
+  const { latitude, longitude, error: geoError, refresh: refreshGeo } = useGeolocation();
   const fuelTypes = useFilterStore((s) => s.fuelTypes);
   const radius = useFilterStore((s) => s.radius);
   const searchQuery = useFilterStore((s) => s.searchQuery);
@@ -35,6 +37,9 @@ export default function HomePage() {
   });
 
   const [sheetExpanded, setSheetExpanded] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  const showGeoBanner = geoError && !bannerDismissed;
 
   return (
     <div className="flex flex-col h-[calc(100dvh-53px)]">
@@ -44,6 +49,14 @@ export default function HomePage() {
           <div className="p-4 border-b">
             <FilterBar />
           </div>
+          {showGeoBanner && (
+            <GeoBanner
+              message={t('locationUnavailable')}
+              retryLabel={t('retry')}
+              onRetry={refreshGeo}
+              onDismiss={() => setBannerDismissed(true)}
+            />
+          )}
           <div className="flex items-center justify-between px-4 py-2">
             <span className="text-xs text-muted-foreground">
               {t('stationsNearby', { count })}
@@ -57,7 +70,12 @@ export default function HomePage() {
 
         {/* Map */}
         <main className="flex-1 relative">
-          <StationMap stations={stations} />
+          <StationMap
+            stations={stations}
+            userLat={latitude}
+            userLng={longitude}
+            onLocateMe={refreshGeo}
+          />
 
           {/* Mobile bottom sheet */}
           <div
@@ -78,6 +96,14 @@ export default function HomePage() {
             <div className="px-4 pb-2">
               <FilterBar />
             </div>
+            {showGeoBanner && (
+              <GeoBanner
+                message={t('locationUnavailable')}
+                retryLabel={t('retry')}
+                onRetry={refreshGeo}
+                onDismiss={() => setBannerDismissed(true)}
+              />
+            )}
             <div className="flex items-center justify-between px-4 py-1">
               <span className="text-xs text-muted-foreground">
                 {t('stationsNearby', { count })}
@@ -90,6 +116,32 @@ export default function HomePage() {
           </div>
         </main>
       </div>
+    </div>
+  );
+}
+
+function GeoBanner({
+  message,
+  retryLabel,
+  onRetry,
+  onDismiss,
+}: {
+  message: string;
+  retryLabel: string;
+  onRetry: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <div className="mx-4 my-2 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
+      <MapPin className="size-4 shrink-0" />
+      <p className="flex-1 text-xs">{message}</p>
+      <Button variant="ghost" size="xs" onClick={onRetry} className="shrink-0 text-amber-700 hover:text-amber-900 dark:text-amber-300">
+        <RefreshCw className="size-3" />
+        {retryLabel}
+      </Button>
+      <button type="button" onClick={onDismiss} className="shrink-0 text-amber-600 hover:text-amber-800 dark:text-amber-400">
+        <X className="size-3.5" />
+      </button>
     </div>
   );
 }

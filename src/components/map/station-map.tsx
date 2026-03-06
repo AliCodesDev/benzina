@@ -2,9 +2,11 @@
 
 import mapboxgl from 'mapbox-gl';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Locate } from 'lucide-react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { MAPBOX_STYLE, MAPBOX_STYLE_DARK } from '@/lib/constants';
+import { useFilterStore } from '@/stores/use-filter-store';
 import { useMapStore } from '@/stores/use-map-store';
 import { usePreferencesStore } from '@/stores/use-preferences-store';
 import type { NearbyStation } from '@/types/station';
@@ -13,6 +15,9 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 interface StationMapProps {
   stations: NearbyStation[];
+  userLat: number;
+  userLng: number;
+  onLocateMe?: () => void;
 }
 
 function toGeoJSON(stations: NearbyStation[]): GeoJSON.FeatureCollection {
@@ -34,6 +39,100 @@ function toGeoJSON(stations: NearbyStation[]): GeoJSON.FeatureCollection {
       },
     })),
   };
+}
+
+/** Create a GeoJSON polygon approximating a circle. */
+function createCirclePolygon(
+  centerLng: number,
+  centerLat: number,
+  radiusKm: number,
+  points = 64,
+): GeoJSON.Feature<GeoJSON.Polygon> {
+  const coords: [number, number][] = [];
+  const distanceDeg = radiusKm / 111.32; // rough km-to-degrees
+
+  for (let i = 0; i <= points; i++) {
+    const angle = (i / points) * 2 * Math.PI;
+    const dx = distanceDeg * Math.cos(angle);
+    const dy = distanceDeg * Math.sin(angle) / Math.cos((centerLat * Math.PI) / 180);
+    coords.push([centerLng + dy, centerLat + dx]);
+  }
+
+  return {
+    type: 'Feature',
+    geometry: { type: 'Polygon', coordinates: [coords] },
+    properties: {},
+  };
+}
+
+const STATION_LAYER_PAINT: mapboxgl.CirclePaint = {
+  'circle-radius': 8,
+  'circle-color': [
+    'match',
+    ['get', 'brand_slug'],
+    'total', '#e11d48',
+    'totalenergies', '#e11d48',
+    'medco', '#2563eb',
+    'ipt', '#16a34a',
+    'coral', '#f97316',
+    'hypco', '#7c3aed',
+    '#94a3b8',
+  ],
+  'circle-stroke-width': 2,
+  'circle-stroke-color': '#ffffff',
+};
+
+function addMapLayers(
+  map: mapboxgl.Map,
+  stations: NearbyStation[],
+  centerLng: number,
+  centerLat: number,
+  radiusKm: number,
+  isDark: boolean,
+) {
+  // Radius circle
+  map.addSource('radius-circle', {
+    type: 'geojson',
+    data: createCirclePolygon(centerLng, centerLat, radiusKm),
+  });
+
+  map.addLayer({
+    id: 'radius-fill',
+    type: 'fill',
+    source: 'radius-circle',
+    paint: {
+      'fill-color': '#f59e0b',
+      'fill-opacity': isDark ? 0.08 : 0.06,
+    },
+  });
+
+  map.addLayer({
+    id: 'radius-line',
+    type: 'line',
+    source: 'radius-circle',
+    paint: {
+      'line-color': '#f59e0b',
+      'line-width': 2,
+      'line-dasharray': [4, 3],
+      'line-opacity': isDark ? 0.5 : 0.6,
+    },
+  });
+
+  // Station dots
+  map.addSource('stations', {
+    type: 'geojson',
+    data: toGeoJSON(stations),
+  });
+
+  map.addLayer({
+    id: 'station-circles',
+    type: 'circle',
+    source: 'stations',
+    paint: {
+      ...STATION_LAYER_PAINT,
+      'circle-stroke-color': isDark ? '#1e293b' : '#ffffff',
+    },
+  });
 }
 
 function useIsDark() {
@@ -61,18 +160,29 @@ function useIsDark() {
   return isDark;
 }
 
-export function StationMap({ stations }: StationMapProps) {
+export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [loaded, setLoaded] = useState(false);
   const isDark = useIsDark();
 
+  const radius = useFilterStore((s) => s.radius);
   const center = useMapStore((s) => s.center);
   const zoom = useMapStore((s) => s.zoom);
   const selectedStationId = useMapStore((s) => s.selectedStationId);
   const selectStation = useMapStore((s) => s.selectStation);
   const setCenter = useMapStore((s) => s.setCenter);
   const setZoom = useMapStore((s) => s.setZoom);
+  const flyTo = useMapStore((s) => s.flyTo);
+
+  const handleLocateMe = useCallback(() => {
+    onLocateMe?.();
+    flyTo(userLat, userLng, 14);
+    const map = mapRef.current;
+    if (map) {
+      map.flyTo({ center: [userLng, userLat], zoom: 14 });
+    }
+  }, [onLocateMe, flyTo, userLat, userLng]);
 
   // Initialize map
   useEffect(() => {
@@ -88,32 +198,7 @@ export function StationMap({ stations }: StationMapProps) {
     mapRef.current = map;
 
     map.on('load', () => {
-      map.addSource('stations', {
-        type: 'geojson',
-        data: toGeoJSON(stations),
-      });
-
-      map.addLayer({
-        id: 'station-circles',
-        type: 'circle',
-        source: 'stations',
-        paint: {
-          'circle-radius': 8,
-          'circle-color': [
-            'match',
-            ['get', 'brand_slug'],
-            'total', '#e11d48',
-            'totalenergies', '#e11d48',
-            'medco', '#2563eb',
-            'ipt', '#16a34a',
-            'coral', '#f97316',
-            'hypco', '#7c3aed',
-            '#94a3b8',
-          ],
-          'circle-stroke-width': 2,
-          'circle-stroke-color': isDark ? '#1e293b' : '#ffffff',
-        },
-      });
+      addMapLayers(map, stations, userLng, userLat, radius, isDark);
 
       map.on('click', 'station-circles', (e) => {
         const feature = e.features?.[0];
@@ -158,6 +243,17 @@ export function StationMap({ stations }: StationMapProps) {
     }
   }, [stations, loaded]);
 
+  // Update radius circle when radius or user position changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded) return;
+
+    const source = map.getSource('radius-circle') as mapboxgl.GeoJSONSource | undefined;
+    if (source) {
+      source.setData(createCirclePolygon(userLng, userLat, radius));
+    }
+  }, [radius, userLat, userLng, loaded]);
+
   // Fly to selected station
   useEffect(() => {
     const map = mapRef.current;
@@ -178,32 +274,7 @@ export function StationMap({ stations }: StationMapProps) {
     map.setStyle(newStyle);
 
     map.once('style.load', () => {
-      map.addSource('stations', {
-        type: 'geojson',
-        data: toGeoJSON(stations),
-      });
-
-      map.addLayer({
-        id: 'station-circles',
-        type: 'circle',
-        source: 'stations',
-        paint: {
-          'circle-radius': 8,
-          'circle-color': [
-            'match',
-            ['get', 'brand_slug'],
-            'total', '#e11d48',
-            'totalenergies', '#e11d48',
-            'medco', '#2563eb',
-            'ipt', '#16a34a',
-            'coral', '#f97316',
-            'hypco', '#7c3aed',
-            '#94a3b8',
-          ],
-          'circle-stroke-width': 2,
-          'circle-stroke-color': isDark ? '#1e293b' : '#ffffff',
-        },
-      });
+      addMapLayers(map, stations, userLng, userLat, radius, isDark);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDark]);
@@ -214,6 +285,15 @@ export function StationMap({ stations }: StationMapProps) {
       {!loaded && (
         <Skeleton className="absolute inset-0 rounded-none" />
       )}
+      {/* Locate me button */}
+      <button
+        type="button"
+        onClick={handleLocateMe}
+        className="absolute end-3 bottom-24 z-10 flex size-10 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-colors md:bottom-6"
+        aria-label="Locate me"
+      >
+        <Locate className="size-5" />
+      </button>
     </div>
   );
 }

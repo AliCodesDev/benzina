@@ -31,7 +31,7 @@ export function FuelTypeFilter() {
         type="button"
         onClick={clearFuelTypes}
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+          'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
           allActive
             ? 'bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-900 dark:text-amber-100 dark:border-amber-700'
             : 'bg-muted text-muted-foreground border border-transparent hover:bg-muted/80',
@@ -48,7 +48,7 @@ export function FuelTypeFilter() {
             type="button"
             onClick={() => toggleFuelType(type)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
               isActive
                 ? 'bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-900 dark:text-amber-100 dark:border-amber-700'
                 : 'bg-muted text-muted-foreground border border-transparent hover:bg-muted/80',

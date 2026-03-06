@@ -19,7 +19,7 @@ export default function HomePage() {
   const searchQuery = useFilterStore((s) => s.searchQuery);
   const brand = useFilterStore((s) => s.brand);
 
-  const { stations, count, loading } = useStations({
+  const { stations, count, loading, error, refetch } = useStations({
     lat: latitude,
     lng: longitude,
     radius,
@@ -42,7 +42,7 @@ export default function HomePage() {
             {t('stationsNearby', { count })}
           </div>
           <div className="flex-1 overflow-y-auto px-4 pb-4">
-            <StationList stations={stations} loading={loading} />
+            <StationList stations={stations} loading={loading} error={error} onRetry={refetch} />
           </div>
         </aside>
 
@@ -61,7 +61,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => setSheetExpanded((v) => !v)}
-              className="flex items-center justify-center py-3 shrink-0"
+              className="flex items-center justify-center py-3 min-h-[44px] shrink-0"
             >
               <div className="h-1 w-10 rounded-full bg-muted-foreground/30" />
             </button>
@@ -73,7 +73,7 @@ export default function HomePage() {
               {t('stationsNearby', { count })}
             </div>
             <div className="flex-1 overflow-y-auto px-4 pb-[calc(1rem+env(safe-area-inset-bottom)+60px)]">
-              <StationList stations={stations} loading={loading} />
+              <StationList stations={stations} loading={loading} error={error} onRetry={refetch} />
             </div>
           </div>
         </main>

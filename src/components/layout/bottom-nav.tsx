@@ -35,7 +35,7 @@ export function BottomNav() {
             key={key}
             href={href}
             className={cn(
-              'flex flex-col items-center gap-0.5 px-3 py-1 text-xs transition-colors',
+              'flex flex-col items-center justify-center gap-0.5 px-3 min-h-[44px] min-w-[44px] text-xs transition-colors',
               isActive(key)
                 ? 'text-amber-600 dark:text-amber-400'
                 : 'text-muted-foreground',

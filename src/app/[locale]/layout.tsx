@@ -33,8 +33,40 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: "Benzina",
-  description: "Find gas stations across Lebanon",
+  title: {
+    template: "%s | Benzina - Gas Station Finder Lebanon",
+    default: "Benzina - Gas Station Finder Lebanon",
+  },
+  description:
+    "Find the nearest gas station across all brands in Lebanon. Compare fuel prices, get directions, and check station details.",
+  keywords: [
+    "gas station",
+    "lebanon",
+    "fuel",
+    "benzine",
+    "petrol",
+    "diesel",
+    "fuel prices",
+    "بنزين",
+    "محطة وقود",
+    "لبنان",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "Benzina",
+    title: "Benzina - Gas Station Finder Lebanon",
+    description:
+      "Find the nearest gas station across all brands in Lebanon. Compare fuel prices, get directions, and check station details.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Benzina - Gas Station Finder Lebanon",
+    description:
+      "Find the nearest gas station across all brands in Lebanon. Compare fuel prices and get directions.",
+  },
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default async function LocaleLayout({

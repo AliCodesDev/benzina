@@ -175,6 +175,51 @@
     → Price history table: Date, 95, 98, Diesel, LPG columns grouped by date (20 rows)
     → Toast notifications on success/error
 
+- [x] Session 18: Station ranking algorithm
+  - src/lib/ranking.ts: scoreStation() and rankStations() functions
+    → Weighted score 0–1: proximity (0.50), fuel match (0.30), open status (0.20)
+    → Proximity: 1 - (distance / maxRadius), capped at 0
+    → Fuel match: 1 if station has preferred fuel, 0 if not, 0.5 if no preference
+    → Open status: 1 if is_24h or active, 0.5 otherwise
+  - API: GET /api/stations now supports sort param (distance|rank|name) + preferredFuel
+  - Filter store: added sort state (SortMode type) and setSort action
+  - useStations hook: passes sort and preferredFuel to API
+  - SortToggle component: 3 pill buttons (Nearest/Best match/Name) with icons
+  - Home page: sort toggle shown next to station count in both desktop and mobile
+  - i18n keys added: sortNearest, sortBestMatch, sortName (en + ar)
+
+- [x] Session 19: Map radius indicator, improved empty states, locate me
+  - StationMap: dashed amber circle showing search radius (GeoJSON polygon, fill + line layers)
+    → Updates reactively when radius or user position changes
+    → Extracted addMapLayers() helper to avoid duplication
+  - Locate me button: amber circle button (bottom-right), re-centers map on user location
+  - Empty state: "Expand to 10 km" action button when no stations match filters
+  - Geolocation banner: non-blocking amber banner when location unavailable
+    → "Showing stations near central Beirut" with retry and dismiss buttons
+    → Shown in both desktop sidebar and mobile bottom sheet
+  - New props on StationMap: userLat, userLng, onLocateMe
+  - i18n keys added: expandTo10km, locationUnavailable, locateMe (en + ar)
+
+- [x] Session 20: Final review and fix pass
+  - RTL audit: 12 fixes across 7 files
+    → admin pages: text-right→text-end, ml-→ms-, left-→start-, pl-→ps-
+    → shadcn components: table (text-left→text-start, pr-→pe-), dialog (right-→end-, text-left→text-start),
+      select (pr-/pl-→pe-/ps-, right-→end-), toggle-group (rounded-l/r→rounded-s/e, border-l→border-s)
+  - Translation audit: 31+ hardcoded strings fixed across 5 files
+    → Settings page: all labels now use useTranslations('settings') + useTranslations('fuel')
+    → Welcome modal: uses useTranslations('welcome') + useTranslations('fuel')
+    → not-found.tsx: uses useTranslations('notFound')
+    → Station detail: 'Independent' → tBrand('independent')
+    → Error state: 'Retry' → t('retry')
+    → Added 20+ new i18n keys in en.json and ar.json
+  - Type safety audit: no 'any' types found — clean
+  - Error handling: wrapped clipboard.writeText() in try/catch (share-button.tsx)
+  - Console.log cleanup: none found — clean
+  - Missing key props: all .map() calls have proper keys — clean
+  - Accessibility: added aria-labels to search clear button, header icon buttons
+  - Performance: StationMap loaded via next/dynamic with ssr:false + Skeleton fallback
+    → Admin station edit map: converted to dynamic import('mapbox-gl') inside useEffect
+
 ## Current
 - Core map + list + filters experience is functional
 - Station detail pages with SSR, OG images, and sharing are complete
@@ -182,6 +227,9 @@
 - Search with autocomplete and relevance ranking is complete
 - Settings, onboarding, dark mode, and SEO are complete
 - Admin panel is functional: auth, dashboard, station CRUD, price management
+- Station ranking algorithm with sort toggle is complete
+- Map radius indicator, locate me button, and improved empty states are complete
+- Full codebase audit passed: RTL, i18n, types, error handling, a11y, performance
 
 ## Notes
 - React Compiler enabled

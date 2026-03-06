@@ -146,6 +146,7 @@ export function SearchInput() {
             setShowDropdown(false);
           }}
           className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          aria-label="Clear search"
         >
           <X className="size-4" />
         </button>

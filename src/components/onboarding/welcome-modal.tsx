@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Fuel } from "lucide-react";
 import {
   Dialog,
@@ -15,17 +16,13 @@ import { usePreferencesStore } from "@/stores/use-preferences-store";
 import { cn } from "@/lib/utils";
 import type { FuelType } from "@/types/station";
 
-const FUEL_OPTIONS: { value: FuelType; label: string }[] = [
-  { value: "95", label: "95" },
-  { value: "98", label: "98" },
-  { value: "diesel", label: "Diesel" },
-  { value: "lpg", label: "LPG" },
-];
-
+const FUEL_OPTIONS: FuelType[] = ["95", "98", "diesel", "lpg"];
 const RADIUS_OPTIONS = [1, 3, 5, 10] as const;
 
 export function WelcomeModal() {
   const router = useRouter();
+  const t = useTranslations("welcome");
+  const tFuel = useTranslations("fuel");
   const { hasCompletedOnboarding, setLocale, setPreferredFuels, setDefaultRadius, completeOnboarding } =
     usePreferencesStore();
 
@@ -66,17 +63,17 @@ export function WelcomeModal() {
             <Fuel className="size-7 text-primary" />
           </div>
           <DialogTitle className="font-[family-name:var(--font-instrument-serif)] text-2xl italic">
-            Welcome to Benzina
+            {t("title")}
           </DialogTitle>
           <DialogDescription>
-            Find the nearest gas station across all brands in Lebanon
+            {t("subtitle")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-5">
           {/* Language selection */}
           <fieldset>
-            <legend className="mb-2 text-sm font-medium">Language</legend>
+            <legend className="mb-2 text-sm font-medium">{t("language")}</legend>
             <div className="flex gap-2">
               {([
                 { value: "en", label: "English" },
@@ -102,22 +99,22 @@ export function WelcomeModal() {
           {/* Fuel type selection */}
           <fieldset>
             <legend className="mb-2 text-sm font-medium">
-              Preferred fuel type
+              {t("fuelPreference")}
             </legend>
             <div className="flex flex-wrap gap-2">
               {FUEL_OPTIONS.map((fuel) => (
                 <button
-                  key={fuel.value}
+                  key={fuel}
                   type="button"
-                  onClick={() => toggleFuel(fuel.value)}
+                  onClick={() => toggleFuel(fuel)}
                   className={cn(
                     "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                    selectedFuels.includes(fuel.value)
+                    selectedFuels.includes(fuel)
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background hover:bg-muted"
                   )}
                 >
-                  {fuel.label}
+                  {tFuel(fuel)}
                 </button>
               ))}
             </div>
@@ -125,7 +122,7 @@ export function WelcomeModal() {
 
           {/* Radius selection */}
           <fieldset>
-            <legend className="mb-2 text-sm font-medium">Default radius</legend>
+            <legend className="mb-2 text-sm font-medium">{t("defaultRadius")}</legend>
             <div className="flex flex-wrap gap-2">
               {RADIUS_OPTIONS.map((radius) => (
                 <button
@@ -147,7 +144,7 @@ export function WelcomeModal() {
         </div>
 
         <Button onClick={handleSubmit} className="mt-2 w-full" size="lg">
-          Find Stations
+          {t("getStarted")}
         </Button>
       </DialogContent>
     </Dialog>

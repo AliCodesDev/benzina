@@ -60,14 +60,37 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "fuelPreference": "Preferred fuel",
-    "defaultRadius": "Default radius",
+    "fuelPreference": "Preferred fuel type",
+    "defaultRadius": "Default search radius",
+    "searchPreferences": "Search preferences",
+    "display": "Display",
+    "currency": "Currency",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "currencyBoth": "Both",
+    "resetPreferences": "Reset preferences",
+    "version": "Benzina v1.0",
+    "dataSource": "Data sourced from DGO and OpenStreetMap",
+    "viewOnGithub": "View on GitHub",
     "darkMode": "Dark mode",
     "about": "About Benzina"
   },
   "welcome": {
     "title": "Welcome to Benzina",
     "subtitle": "Find the nearest gas station across all brands in Lebanon",
+    "language": "Language",
+    "fuelPreference": "Preferred fuel type",
+    "defaultRadius": "Default radius",
     "getStarted": "Find Stations"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "backToMap": "Back to map"
+  },
+  "brand": {
+    "independent": "Independent"
   }
 }

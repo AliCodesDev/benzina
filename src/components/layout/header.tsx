@@ -25,12 +25,12 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="size-8" asChild>
+          <Button variant="ghost" size="icon" className="size-8" asChild aria-label="Fuel prices">
             <Link href="/prices">
               <DollarSign className="size-4" />
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="hidden md:inline-flex size-8" asChild>
+          <Button variant="ghost" size="icon" className="hidden md:inline-flex size-8" asChild aria-label="Settings">
             <Link href="/settings">
               <Settings className="size-4" />
             </Link>

@@ -1,4 +1,7 @@
+'use client';
+
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 
@@ -8,6 +11,8 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
+  const t = useTranslations('common');
+
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="flex size-12 items-center justify-center rounded-full bg-destructive/10">
@@ -17,7 +22,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry} className="mt-4 gap-2">
           <RefreshCw className="size-3.5" />
-          Retry
+          {t('retry')}
         </Button>
       )}
     </div>

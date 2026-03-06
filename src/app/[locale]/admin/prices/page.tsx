@@ -182,10 +182,10 @@ export default function AdminPricesPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Date</TableHead>
-                <TableHead className="text-right">95</TableHead>
-                <TableHead className="text-right">98</TableHead>
-                <TableHead className="text-right">Diesel</TableHead>
-                <TableHead className="text-right">LPG</TableHead>
+                <TableHead className="text-end">95</TableHead>
+                <TableHead className="text-end">98</TableHead>
+                <TableHead className="text-end">Diesel</TableHead>
+                <TableHead className="text-end">LPG</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -212,7 +212,7 @@ export default function AdminPricesPage() {
                   <TableRow key={dateStr}>
                     <TableCell className="font-medium">{dateStr}</TableCell>
                     {FUEL_TYPES.map((ft) => (
-                      <TableCell key={ft} className="text-right tabular-nums">
+                      <TableCell key={ft} className="text-end tabular-nums">
                         {vals[ft] != null
                           ? vals[ft].toLocaleString()
                           : '—'}

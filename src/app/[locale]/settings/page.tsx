@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ExternalLink, RotateCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -18,18 +18,14 @@ import { usePreferencesStore } from "@/stores/use-preferences-store";
 import { cn } from "@/lib/utils";
 import type { FuelType } from "@/types/station";
 
-const FUEL_OPTIONS: { value: FuelType; label: string }[] = [
-  { value: "95", label: "95" },
-  { value: "98", label: "98" },
-  { value: "diesel", label: "Diesel" },
-  { value: "lpg", label: "LPG" },
-];
-
+const FUEL_OPTIONS: FuelType[] = ["95", "98", "diesel", "lpg"];
 const RADIUS_OPTIONS = [1, 3, 5, 10, 25] as const;
 
 export default function SettingsPage() {
   const router = useRouter();
   const currentLocale = useLocale();
+  const t = useTranslations("settings");
+  const tFuel = useTranslations("fuel");
   const {
     preferredFuels,
     defaultRadius,
@@ -62,13 +58,13 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-lg px-4 py-6 pb-24 space-y-6">
       <h1 className="text-2xl font-[family-name:var(--font-instrument-serif)] italic">
-        Settings
+        {t("title")}
       </h1>
 
       {/* Language */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Language</CardTitle>
+          <CardTitle className="text-base">{t("language")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
@@ -97,25 +93,25 @@ export default function SettingsPage() {
       {/* Fuel & Radius */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Search preferences</CardTitle>
+          <CardTitle className="text-base">{t("searchPreferences")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Preferred fuel type</Label>
+            <Label>{t("fuelPreference")}</Label>
             <div className="flex flex-wrap gap-2">
               {FUEL_OPTIONS.map((fuel) => (
                 <button
-                  key={fuel.value}
+                  key={fuel}
                   type="button"
-                  onClick={() => toggleFuel(fuel.value)}
+                  onClick={() => toggleFuel(fuel)}
                   className={cn(
                     "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                    preferredFuels.includes(fuel.value)
+                    preferredFuels.includes(fuel)
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background hover:bg-muted"
                   )}
                 >
-                  {fuel.label}
+                  {tFuel(fuel)}
                 </button>
               ))}
             </div>
@@ -124,7 +120,7 @@ export default function SettingsPage() {
           <Separator />
 
           <div className="space-y-2">
-            <Label>Default search radius</Label>
+            <Label>{t("defaultRadius")}</Label>
             <div className="flex flex-wrap gap-2">
               {RADIUS_OPTIONS.map((radius) => (
                 <button
@@ -149,11 +145,11 @@ export default function SettingsPage() {
       {/* Display */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Display</CardTitle>
+          <CardTitle className="text-base">{t("display")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label>Currency</Label>
+            <Label>{t("currency")}</Label>
             <Select
               value={currency}
               onValueChange={(v) => setCurrency(v as "LBP" | "USD" | "both")}
@@ -164,7 +160,7 @@ export default function SettingsPage() {
               <SelectContent>
                 <SelectItem value="LBP">LBP</SelectItem>
                 <SelectItem value="USD">USD</SelectItem>
-                <SelectItem value="both">Both</SelectItem>
+                <SelectItem value="both">{t("currencyBoth")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -172,7 +168,7 @@ export default function SettingsPage() {
           <Separator />
 
           <div className="flex items-center justify-between">
-            <Label>Theme</Label>
+            <Label>{t("theme")}</Label>
             <Select
               value={theme}
               onValueChange={(v) =>
@@ -183,9 +179,9 @@ export default function SettingsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="light">{t("themeLight")}</SelectItem>
+                <SelectItem value="dark">{t("themeDark")}</SelectItem>
+                <SelectItem value="system">{t("themeSystem")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -199,22 +195,22 @@ export default function SettingsPage() {
         onClick={handleReset}
       >
         <RotateCcw className="size-4" />
-        Reset preferences
+        {t("resetPreferences")}
       </Button>
 
       {/* About */}
       <div className="space-y-2 border-t pt-6 text-center text-sm text-muted-foreground">
         <p className="font-[family-name:var(--font-instrument-serif)] text-base italic text-foreground">
-          Benzina v1.0
+          {t("version")}
         </p>
-        <p>Data sourced from DGO and OpenStreetMap</p>
+        <p>{t("dataSource")}</p>
         <a
           href="https://github.com/nicolo/benzina"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 underline underline-offset-4 hover:text-foreground"
         >
-          View on GitHub
+          {t("viewOnGithub")}
           <ExternalLink className="size-3" />
         </a>
       </div>

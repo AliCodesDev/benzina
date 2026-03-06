@@ -25,9 +25,13 @@ export function ShareButton({ url, title }: ShareButtonProps) {
       return;
     }
 
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API not available — ignore
+    }
   }, [title, url]);
 
   return (

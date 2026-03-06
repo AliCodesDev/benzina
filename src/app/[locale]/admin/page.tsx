@@ -162,11 +162,11 @@ export default function AdminDashboard() {
               }`}
             >
               <span className="text-sm uppercase">{price.fuel_type}</span>
-              <div className="text-right">
+              <div className="text-end">
                 <span className="text-sm font-medium">
                   {price.price_lbp.toLocaleString()} LBP
                 </span>
-                <span className="ml-2 text-xs text-muted-foreground">
+                <span className="ms-2 text-xs text-muted-foreground">
                   {price.effective_date}
                 </span>
               </div>

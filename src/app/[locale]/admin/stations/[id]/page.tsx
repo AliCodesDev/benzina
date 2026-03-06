@@ -1,6 +1,6 @@
 'use client';
 
-import mapboxgl from 'mapbox-gl';
+import type mapboxgl from 'mapbox-gl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Trash2 } from 'lucide-react';
@@ -28,8 +28,6 @@ import {
 } from '@/components/ui/dialog';
 
 import { BEIRUT_CENTER, FUEL_TYPES, MAPBOX_STYLE } from '@/lib/constants';
-
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 const BRANDS = [
   'total',
@@ -143,14 +141,21 @@ export default function AdminStationEditPage() {
   useEffect(() => {
     if (loading || !mapContainerRef.current || mapRef.current) return;
 
-    const map = new mapboxgl.Map({
+    let cancelled = false;
+
+    import('mapbox-gl').then((mb) => {
+      if (cancelled || !mapContainerRef.current) return;
+
+      mb.default.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+
+    const map = new mb.default.Map({
       container: mapContainerRef.current,
       style: MAPBOX_STYLE,
       center: [form.lng, form.lat],
       zoom: 14,
     });
 
-    const marker = new mapboxgl.Marker({ draggable: true })
+    const marker = new mb.default.Marker({ draggable: true })
       .setLngLat([form.lng, form.lat])
       .addTo(map);
 
@@ -175,11 +180,15 @@ export default function AdminStationEditPage() {
 
     mapRef.current = map;
     markerRef.current = marker;
+    }); // end import('mapbox-gl').then
 
     return () => {
-      mapRef.current = null;
-      markerRef.current = null;
-      map.remove();
+      cancelled = true;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        markerRef.current = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);

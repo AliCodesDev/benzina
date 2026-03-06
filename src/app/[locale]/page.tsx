@@ -4,10 +4,17 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { MapPin, RefreshCw, X } from 'lucide-react';
 
+import dynamic from 'next/dynamic';
+
 import { FilterBar } from '@/components/filters/filter-bar';
 import { SortToggle } from '@/components/filters/sort-toggle';
-import { StationMap } from '@/components/map/station-map';
 import { StationList } from '@/components/station/station-list';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const StationMap = dynamic(
+  () => import('@/components/map/station-map').then((m) => m.StationMap),
+  { ssr: false, loading: () => <Skeleton className="size-full rounded-none" /> },
+);
 import { Button } from '@/components/ui/button';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { useStations } from '@/hooks/use-stations';

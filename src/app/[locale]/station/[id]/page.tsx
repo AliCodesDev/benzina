@@ -114,6 +114,7 @@ export default async function StationDetailPage({ params }: PageProps) {
   const locale = await getLocale();
   const t = await getTranslations('station');
   const tFuel = await getTranslations('fuel');
+  const tBrand = await getTranslations('brand');
 
   const name =
     locale === 'ar' && station.name_ar ? station.name_ar : station.name_en;
@@ -159,7 +160,7 @@ export default async function StationDetailPage({ params }: PageProps) {
               style={{ backgroundColor: brandColor }}
             />
             <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              {station.brand ?? 'Independent'}
+              {station.brand ?? tBrand('independent')}
             </span>
           </div>
 

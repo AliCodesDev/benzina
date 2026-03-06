@@ -60,14 +60,37 @@
   "settings": {
     "title": "الإعدادات",
     "language": "اللغة",
-    "fuelPreference": "الوقود المفضّل",
-    "defaultRadius": "نطاق البحث",
+    "fuelPreference": "نوع الوقود المفضّل",
+    "defaultRadius": "نطاق البحث الافتراضي",
+    "searchPreferences": "تفضيلات البحث",
+    "display": "العرض",
+    "currency": "العملة",
+    "theme": "المظهر",
+    "themeLight": "فاتح",
+    "themeDark": "داكن",
+    "themeSystem": "النظام",
+    "currencyBoth": "كلاهما",
+    "resetPreferences": "إعادة تعيين التفضيلات",
+    "version": "بنزينة v1.0",
+    "dataSource": "البيانات من مديرية النفط وOpenStreetMap",
+    "viewOnGithub": "عرض على GitHub",
     "darkMode": "الوضع الداكن",
     "about": "عن بنزينة"
   },
   "welcome": {
     "title": "مرحباً بك في بنزينة",
     "subtitle": "اعثر على أقرب محطة وقود من جميع العلامات التجارية في لبنان",
+    "language": "اللغة",
+    "fuelPreference": "نوع الوقود المفضّل",
+    "defaultRadius": "النطاق الافتراضي",
     "getStarted": "ابحث عن محطات"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "backToMap": "العودة إلى الخريطة"
+  },
+  "brand": {
+    "independent": "مستقلة"
   }
 }

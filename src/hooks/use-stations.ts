@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { FuelType } from '@/types/station';
 import type { NearbyStation } from '@/types/station';
+import type { SortMode } from '@/stores/use-filter-store';
 
 interface UseStationsParams {
   lat: number;
@@ -12,6 +13,8 @@ interface UseStationsParams {
   fuelTypes: FuelType[];
   brand: string | null;
   searchQuery: string;
+  sort?: SortMode;
+  preferredFuel?: string | null;
 }
 
 interface UseStationsResult {
@@ -23,7 +26,7 @@ interface UseStationsResult {
 }
 
 export function useStations(params: UseStationsParams): UseStationsResult {
-  const { lat, lng, radius, fuelTypes, brand, searchQuery } = params;
+  const { lat, lng, radius, fuelTypes, brand, searchQuery, sort, preferredFuel } = params;
 
   const [stations, setStations] = useState<NearbyStation[]>([]);
   const [count, setCount] = useState(0);
@@ -57,6 +60,12 @@ export function useStations(params: UseStationsParams): UseStationsResult {
     if (debouncedQuery) {
       url.searchParams.set('q', debouncedQuery);
     }
+    if (sort && sort !== 'distance') {
+      url.searchParams.set('sort', sort);
+    }
+    if (preferredFuel) {
+      url.searchParams.set('preferredFuel', preferredFuel);
+    }
 
     try {
       const response = await fetch(url.toString(), {
@@ -79,7 +88,7 @@ export function useStations(params: UseStationsParams): UseStationsResult {
         setLoading(false);
       }
     }
-  }, [lat, lng, radius, fuelTypes, brand, debouncedQuery]);
+  }, [lat, lng, radius, fuelTypes, brand, debouncedQuery, sort, preferredFuel]);
 
   useEffect(() => {
     fetchStations();

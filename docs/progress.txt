@@ -116,24 +116,86 @@
     → ARIA combobox/listbox attributes for accessibility
     → Closes on blur (only when focus leaves container) and Escape
 
+- [x] Session 11: Welcome onboarding modal
+  - WelcomeModal client component with multi-step flow
+  - Collects preferred fuels, default radius, currency, theme
+  - Persists to preferences store (localStorage), sets hasCompletedOnboarding flag
+  - Only shows once on first visit
+
+- [x] Session 12: Settings page
+  - src/app/[locale]/settings/page.tsx (client component)
+  - Language, preferred fuels, default radius, currency (LBP/USD/both), theme (light/dark/system)
+  - Reset all preferences option
+  - Wired to preferences store with localStorage persistence
+
+- [x] Session 13: Dark mode support
+  - ThemeProvider component wrapping app, reads theme from preferences store
+  - Applies .dark class to document, CSS variables switch via dark: variant
+  - Mapbox map switches between light-v11 and dark-v11 styles
+  - All components support dark mode via Tailwind dark: classes
+
+- [x] Session 14: SEO (sitemap, robots, meta tags, favicon)
+  - sitemap.xml: dynamic generation from all station slugs
+  - robots.txt: allows all crawlers, references sitemap
+  - Metadata: template-based titles, OG + Twitter cards
+  - Custom SVG favicon
+
+- [x] Session 15: Admin panel — authentication and dashboard
+  - API: POST /api/admin/auth — password auth against ADMIN_PASSWORD env var
+    → SHA-256 hashed session cookie (httpOnly, secure, sameSite strict, 24h maxAge)
+  - src/lib/admin-auth.ts: verifyAdminSession() helper for API routes
+  - Admin layout: client component, shows login form if not authenticated, renders children if authenticated
+  - Admin dashboard: stats grid (total stations, fuel types, brands, last scrape)
+    → Stations by brand count list, latest fuel prices, last scrape log
+    → Links to stations and prices management
+
+- [x] Session 16: Admin station management CRUD
+  - API: GET /api/admin/stations — paginated list with search (ilike across name/brand/address/city)
+    → Parses PostGIS geography → lat/lng, returns total count
+  - API: POST /api/admin/stations — create station, converts lat/lng → POINT(), auto-generates slug
+  - API: PUT /api/admin/stations/[id] — partial updates, converts lat/lng if provided
+  - API: DELETE /api/admin/stations/[id] — soft delete (sets status to 'closed')
+  - Stations list page: shadcn Table with columns (name, brand, status, fuel types, verified)
+    → Debounced search, pagination (20/page), click row to edit, "Add Station" button
+  - Station edit page: full form (name en/ar, brand dropdown, status dropdown, fuel type checkboxes,
+    address en/ar, city, caza, phone, is_24h, amenities, lat/lng)
+    → Interactive Mapbox map with draggable marker, click-to-set location
+    → Save (POST for new, PUT for edit), Delete with confirmation dialog
+    → Toast notifications via sonner
+  - shadcn components added: table, input, checkbox, sonner (toast)
+  - Toaster added to admin layout
+
+- [x] Session 17: Admin fuel price management
+  - API: GET /api/admin/prices — all prices ordered by effective_date DESC (limit 80)
+  - API: POST /api/admin/prices — add/upsert price entry
+    → Validates fuel_type (95/98/diesel/lpg), price_lbp > 0, effective_date required
+    → Upserts on (fuel_type, effective_date) unique constraint, source: 'admin'
+  - Prices page: form with date picker (default today) + 4 labeled price inputs
+    → "Update Prices" submits all non-empty fields in parallel
+    → Price history table: Date, 95, 98, Diesel, LPG columns grouped by date (20 rows)
+    → Toast notifications on success/error
+
 ## Current
 - Core map + list + filters experience is functional
 - Station detail pages with SSR, OG images, and sharing are complete
 - Fuel prices page, ticker, and API are complete
 - Search with autocomplete and relevance ranking is complete
-- Next: settings page, onboarding
+- Settings, onboarding, dark mode, and SEO are complete
+- Admin panel is functional: auth, dashboard, station CRUD, price management
 
 ## Notes
 - React Compiler enabled
 - /ar works with dir="rtl" ✓
 - Header: sticky, Instrument Serif italic logo, EN/ع locale toggle, prices + settings buttons
-- shadcn components: button, badge, skeleton, toggle, toggle-group
+- shadcn components: button, badge, skeleton, toggle, toggle-group, card, dialog, label, select, separator, table, input, checkbox, sonner
 - DGO scraper: 2499 total stations, 297 in Greater Beirut bounding box
 - Data files in data/: dgo-stations-raw.json, osm-stations-raw.json, merged-stations.json
 - 316 stations total in merged dataset, ready in Supabase
 - Supabase Database types now fully typed (stations, fuel_prices, scrape_logs, nearby_stations RPC)
 - Header height ~53px (used in h-[calc(100dvh-53px)] for full viewport layout)
-- API surface: GET /api/stations (list+search), GET /api/stations/[id] (detail), GET /api/prices, GET /api/og (OG image)
+- API surface:
+  Public: GET /api/stations, GET /api/stations/[id], GET /api/prices, GET /api/og
+  Admin: POST /api/admin/auth, GET/POST /api/admin/stations, PUT/DELETE /api/admin/stations/[id], GET/POST /api/admin/prices
 - OG images are edge-rendered with Satori (inline styles only, no external icon libs)
 - Price ticker renders above header on all pages (client component, fetches /api/prices)
 

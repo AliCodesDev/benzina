@@ -4,12 +4,14 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { FilterBar } from '@/components/filters/filter-bar';
+import { SortToggle } from '@/components/filters/sort-toggle';
 import { StationMap } from '@/components/map/station-map';
 import { StationList } from '@/components/station/station-list';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { useStations } from '@/hooks/use-stations';
 import { cn } from '@/lib/utils';
 import { useFilterStore } from '@/stores/use-filter-store';
+import { usePreferencesStore } from '@/stores/use-preferences-store';
 
 export default function HomePage() {
   const t = useTranslations('common');
@@ -18,6 +20,8 @@ export default function HomePage() {
   const radius = useFilterStore((s) => s.radius);
   const searchQuery = useFilterStore((s) => s.searchQuery);
   const brand = useFilterStore((s) => s.brand);
+  const sort = useFilterStore((s) => s.sort);
+  const preferredFuels = usePreferencesStore((s) => s.preferredFuels);
 
   const { stations, count, loading, error, refetch } = useStations({
     lat: latitude,
@@ -26,6 +30,8 @@ export default function HomePage() {
     fuelTypes,
     brand,
     searchQuery,
+    sort,
+    preferredFuel: preferredFuels[0] ?? null,
   });
 
   const [sheetExpanded, setSheetExpanded] = useState(false);
@@ -38,8 +44,11 @@ export default function HomePage() {
           <div className="p-4 border-b">
             <FilterBar />
           </div>
-          <div className="px-4 py-2 text-xs text-muted-foreground">
-            {t('stationsNearby', { count })}
+          <div className="flex items-center justify-between px-4 py-2">
+            <span className="text-xs text-muted-foreground">
+              {t('stationsNearby', { count })}
+            </span>
+            <SortToggle />
           </div>
           <div className="flex-1 overflow-y-auto px-4 pb-4">
             <StationList stations={stations} loading={loading} error={error} onRetry={refetch} />
@@ -69,8 +78,11 @@ export default function HomePage() {
             <div className="px-4 pb-2">
               <FilterBar />
             </div>
-            <div className="px-4 py-1 text-xs text-muted-foreground">
-              {t('stationsNearby', { count })}
+            <div className="flex items-center justify-between px-4 py-1">
+              <span className="text-xs text-muted-foreground">
+                {t('stationsNearby', { count })}
+              </span>
+              <SortToggle />
             </div>
             <div className="flex-1 overflow-y-auto px-4 pb-[calc(1rem+env(safe-area-inset-bottom)+60px)]">
               <StationList stations={stations} loading={loading} error={error} onRetry={refetch} />

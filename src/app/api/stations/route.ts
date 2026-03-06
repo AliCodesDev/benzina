@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 
 import { BEIRUT_CENTER, DEFAULT_RADIUS_KM } from '@/lib/constants';
+import { rankStations } from '@/lib/ranking';
 
 const DEFAULT_LIMIT = 50;
 const ARABIC_REGEX = /[\u0600-\u06FF]/;
@@ -66,6 +67,8 @@ export async function GET(request: NextRequest) {
   const brand = searchParams.get('brand') ?? undefined;
   const q = searchParams.get('q') ?? undefined;
   const limit = Number(searchParams.get('limit') ?? DEFAULT_LIMIT);
+  const sort = searchParams.get('sort') ?? 'distance';
+  const preferredFuel = searchParams.get('preferredFuel') ?? undefined;
 
   // Validate parameters
   if (isNaN(lat) || lat < -90 || lat > 90) {
@@ -138,10 +141,25 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Apply sort mode (skip if text search already sorted by relevance)
+    if (!q) {
+      if (sort === 'rank') {
+        stations = rankStations(stations, {
+          preferredFuel: preferredFuel ?? null,
+          maxRadius: radius * 1000, // km → meters
+        });
+      } else if (sort === 'name') {
+        stations = [...stations].sort((a, b) =>
+          a.name_en.localeCompare(b.name_en),
+        );
+      }
+      // sort === 'distance' is the default from the RPC (no re-sort needed)
+    }
+
     const response = NextResponse.json({
       stations,
       count: stations.length,
-      params: { lat, lng, radius, fuel, brand, q },
+      params: { lat, lng, radius, fuel, brand, q, sort },
     });
 
     response.headers.set('Cache-Control', 'public, s-maxage=60');

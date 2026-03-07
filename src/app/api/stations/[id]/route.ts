@@ -34,17 +34,28 @@ export async function GET(
     let lng: number | null = null;
 
     if (station.location) {
+      const loc = station.location;
       try {
-        const geo =
-          typeof station.location === 'string'
-            ? JSON.parse(station.location)
-            : station.location;
+        const geo = typeof loc === 'string' ? JSON.parse(loc) : loc;
         if (geo?.type === 'Point' && Array.isArray(geo.coordinates)) {
           lng = geo.coordinates[0];
           lat = geo.coordinates[1];
         }
       } catch {
-        // location could not be parsed — leave lat/lng null
+        // PostGIS returns EWKB hex string — decode it
+        if (typeof loc === 'string' && /^[0-9a-fA-F]+$/.test(loc)) {
+          try {
+            const buf = Buffer.from(loc, 'hex');
+            const le = buf[0] === 1;
+            const wkbType = le ? buf.readUInt32LE(1) : buf.readUInt32BE(1);
+            const hasSRID = (wkbType & 0x20000000) !== 0;
+            const offset = hasSRID ? 9 : 5;
+            lng = le ? buf.readDoubleLE(offset) : buf.readDoubleBE(offset);
+            lat = le ? buf.readDoubleLE(offset + 8) : buf.readDoubleBE(offset + 8);
+          } catch {
+            // ignore decode errors
+          }
+        }
       }
     }
 

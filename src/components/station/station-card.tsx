@@ -1,6 +1,7 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { ChevronRight } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { FuelBadge } from '@/components/station/fuel-badge';
 import { BRAND_COLORS } from '@/lib/constants';
@@ -15,6 +16,7 @@ interface StationCardProps {
 
 export function StationCard({ station, isSelected, onClick }: StationCardProps) {
   const locale = useLocale();
+  const t = useTranslations('station');
 
   const name = (locale === 'ar' && station.name_ar) ? station.name_ar : station.name_en;
   const address = locale === 'ar' ? station.address_ar : station.address_en;
@@ -61,6 +63,13 @@ export function StationCard({ station, isSelected, onClick }: StationCardProps) 
               </span>
             )}
           </div>
+
+          {isSelected && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1 font-medium">
+              {t('tapToViewDetails')}
+              <ChevronRight className="size-3" />
+            </p>
+          )}
         </div>
       </div>
     </button>

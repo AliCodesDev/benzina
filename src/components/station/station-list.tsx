@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
+import { useRouter } from '@/i18n/navigation';
 import { StationCard } from '@/components/station/station-card';
 import { EmptyState } from '@/components/ui/empty-state';
 import { ErrorState } from '@/components/ui/error-state';
@@ -19,6 +20,7 @@ interface StationListProps {
 
 export function StationList({ stations, loading, error, onRetry }: StationListProps) {
   const t = useTranslations('common');
+  const router = useRouter();
   const selectedStationId = useMapStore((s) => s.selectedStationId);
   const selectStation = useMapStore((s) => s.selectStation);
   const flyTo = useMapStore((s) => s.flyTo);
@@ -57,8 +59,12 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
           station={station}
           isSelected={station.id === selectedStationId}
           onClick={() => {
-            selectStation(station.id);
-            flyTo(station.latitude, station.longitude, 15);
+            if (station.id === selectedStationId) {
+              router.push(`/station/${station.slug}`);
+            } else {
+              selectStation(station.id);
+              flyTo(station.latitude, station.longitude, 15);
+            }
           }}
         />
       ))}

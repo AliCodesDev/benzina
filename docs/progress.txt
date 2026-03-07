@@ -220,6 +220,24 @@
   - Performance: StationMap loaded via next/dynamic with ssr:false + Skeleton fallback
     → Admin station edit map: converted to dynamic import('mapbox-gl') inside useEffect
 
+- [x] Session 21: Platform-specific sharing + station card navigation
+  - Share button rewritten: dropdown menu with WhatsApp, Telegram, X/Twitter, Copy link
+    → WhatsApp: wa.me/?text= deep link
+    → Telegram: t.me/share/url deep link
+    → X/Twitter: x.com/intent/tweet deep link
+    → Copy link: clipboard API with "Copied!" feedback
+    → Custom SVG icons for WhatsApp, Telegram, X
+  - shadcn dropdown-menu component added, RTL-fixed (7 pl-/pr-/left-/ml- → ps-/pe-/start-/ms-)
+  - Station card: tap-to-select, tap-again-to-open-details pattern
+    → Selected card shows "Tap again to view details" hint in amber text
+    → Station list onClick: first click selects + flyTo, second click navigates to /station/[slug]
+  - Share button always visible on detail page (no longer gated behind lat/lng check)
+  - Fixed PostGIS EWKB hex decoding for station coordinates
+    → Supabase returns location as EWKB hex string, not GeoJSON
+    → Added binary buffer parsing fallback (handles both with/without SRID)
+    → Applied fix to both station detail page and /api/stations/[id] route
+  - i18n keys added: shareWhatsApp, shareTelegram, shareX, copyLink, tapToViewDetails (en + ar)
+
 ## Current
 - Core map + list + filters experience is functional
 - Station detail pages with SSR, OG images, and sharing are complete
@@ -230,12 +248,13 @@
 - Station ranking algorithm with sort toggle is complete
 - Map radius indicator, locate me button, and improved empty states are complete
 - Full codebase audit passed: RTL, i18n, types, error handling, a11y, performance
+- Platform-specific sharing (WhatsApp, Telegram, X, copy link) is complete
 
 ## Notes
 - React Compiler enabled
 - /ar works with dir="rtl" ✓
 - Header: sticky, Instrument Serif italic logo, EN/ع locale toggle, prices + settings buttons
-- shadcn components: button, badge, skeleton, toggle, toggle-group, card, dialog, label, select, separator, table, input, checkbox, sonner
+- shadcn components: button, badge, skeleton, toggle, toggle-group, card, dialog, label, select, separator, table, input, checkbox, sonner, dropdown-menu
 - DGO scraper: 2499 total stations, 297 in Greater Beirut bounding box
 - Data files in data/: dgo-stations-raw.json, osm-stations-raw.json, merged-stations.json
 - 316 stations total in merged dataset, ready in Supabase

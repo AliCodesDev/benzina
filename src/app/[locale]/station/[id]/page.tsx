@@ -42,17 +42,29 @@ async function getStation(id: string) {
   let lng: number | null = null;
 
   if (station.location) {
+    const loc = station.location;
     try {
-      const geo =
-        typeof station.location === 'string'
-          ? JSON.parse(station.location)
-          : station.location;
+      // PostgREST may return GeoJSON object or stringified GeoJSON
+      const geo = typeof loc === 'string' ? JSON.parse(loc) : loc;
       if (geo?.type === 'Point' && Array.isArray(geo.coordinates)) {
         lng = geo.coordinates[0];
         lat = geo.coordinates[1];
       }
     } catch {
-      // ignore parse errors
+      // PostGIS returns EWKB hex string — decode it
+      if (typeof loc === 'string' && /^[0-9a-fA-F]+$/.test(loc)) {
+        try {
+          const buf = Buffer.from(loc, 'hex');
+          const le = buf[0] === 1;
+          const wkbType = le ? buf.readUInt32LE(1) : buf.readUInt32BE(1);
+          const hasSRID = (wkbType & 0x20000000) !== 0;
+          const offset = hasSRID ? 9 : 5;
+          lng = le ? buf.readDoubleLE(offset) : buf.readDoubleBE(offset);
+          lat = le ? buf.readDoubleLE(offset + 8) : buf.readDoubleBE(offset + 8);
+        } catch {
+          // ignore decode errors
+        }
+      }
     }
   }
 
@@ -194,19 +206,19 @@ export default async function StationDetailPage({ params }: PageProps) {
         </div>
 
         {/* Action buttons */}
-        {station.lat != null && station.lng != null && (
-          <div className="flex gap-3">
+        <div className="flex gap-3">
+          {station.lat != null && station.lng != null && (
             <NavigateButton
               latitude={station.lat}
               longitude={station.lng}
               stationName={station.name_en}
             />
-            <ShareButton
-              url={stationUrl}
-              title={`${station.name_en} - Benzina`}
-            />
-          </div>
-        )}
+          )}
+          <ShareButton
+            url={stationUrl}
+            title={`${station.name_en} - Benzina`}
+          />
+        </div>
 
         {/* Info cards */}
         <div className="space-y-3">

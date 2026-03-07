@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { useRouter } from '@/i18n/navigation';
@@ -25,6 +26,18 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
   const selectStation = useMapStore((s) => s.selectStation);
   const flyTo = useMapStore((s) => s.flyTo);
   const setRadius = useFilterStore((s) => s.setRadius);
+
+  // Auto-scroll to selected station card
+  useEffect(() => {
+    if (!selectedStationId) return;
+
+    const timer = setTimeout(() => {
+      const el = document.querySelector(`[data-station-id="${selectedStationId}"]`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [selectedStationId]);
 
   if (loading) {
     return (
@@ -62,7 +75,7 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
             if (station.id === selectedStationId) {
               router.push(`/station/${station.slug}`);
             } else {
-              selectStation(station.id);
+              selectStation(station.id, 'list');
               flyTo(station.latitude, station.longitude, 15);
             }
           }}

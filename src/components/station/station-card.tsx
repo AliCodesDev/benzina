@@ -25,13 +25,13 @@ export function StationCard({ station, isSelected, onClick }: StationCardProps) 
   return (
     <button
       type="button"
+      data-station-id={station.id}
       onClick={onClick}
       className={cn(
         'w-full text-start p-3 rounded-lg border transition-colors animate-in fade-in duration-300',
-        'hover:bg-muted/50',
         isSelected
-          ? 'border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950 border-is-4'
-          : 'border-border border-is-4 border-is-transparent',
+          ? 'border-amber-500 bg-amber-100 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-950 border-is-4'
+          : 'border-border border-is-4 border-is-transparent hover:bg-muted/50',
       )}
     >
       <div className="flex items-start gap-2">

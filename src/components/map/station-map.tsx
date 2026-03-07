@@ -163,6 +163,7 @@ function useIsDark() {
 export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [loaded, setLoaded] = useState(false);
   const isDark = useIsDark();
 
@@ -225,6 +226,8 @@ export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMa
     });
 
     return () => {
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
       mapRef.current = null;
       map.remove();
     };
@@ -254,16 +257,86 @@ export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMa
     }
   }, [radius, userLat, userLng, loaded]);
 
-  // Fly to selected station
+  // User location blue dot
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !loaded || !selectedStationId) return;
+    if (!map || !loaded) return;
 
-    const station = stations.find((s) => s.id === selectedStationId);
-    if (station) {
-      map.flyTo({ center: [station.longitude, station.latitude], zoom: 15 });
+    if (userMarkerRef.current) {
+      userMarkerRef.current.setLngLat([userLng, userLat]);
+      return;
     }
-  }, [selectedStationId, stations, loaded]);
+
+    const wrapper = document.createElement('div');
+    Object.assign(wrapper.style, {
+      position: 'relative',
+      width: '16px',
+      height: '16px',
+    });
+
+    // Pulse ring
+    const ring = document.createElement('div');
+    Object.assign(ring.style, {
+      position: 'absolute',
+      inset: '0',
+      borderRadius: '50%',
+      background: '#4285f4',
+      animation: 'user-pulse 2s ease-out infinite',
+    });
+    wrapper.appendChild(ring);
+
+    // Solid dot
+    const dot = document.createElement('div');
+    Object.assign(dot.style, {
+      position: 'absolute',
+      inset: '0',
+      borderRadius: '50%',
+      background: '#4285f4',
+      border: '2.5px solid #fff',
+      boxShadow: '0 0 6px rgba(0,0,0,0.35)',
+      zIndex: '1',
+    });
+    wrapper.appendChild(dot);
+
+    userMarkerRef.current = new mapboxgl.Marker({ element: wrapper })
+      .setLngLat([userLng, userLat])
+      .addTo(map);
+  }, [userLat, userLng, loaded]);
+
+  // Fly to selected station + highlight it
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded) return;
+
+    if (!map.getLayer('station-circles')) return;
+
+    // Scale: selected = 13, default = 8
+    map.setPaintProperty('station-circles', 'circle-radius', selectedStationId
+      ? ['case', ['==', ['get', 'id'], selectedStationId], 13, 8]
+      : 8,
+    );
+
+    // Stroke width: selected = 3.5, default = 2
+    map.setPaintProperty('station-circles', 'circle-stroke-width', selectedStationId
+      ? ['case', ['==', ['get', 'id'], selectedStationId], 3.5, 2]
+      : 2,
+    );
+
+    // Stroke color: selected = amber, default = theme-based
+    const defaultStroke = isDark ? '#1e293b' : '#ffffff';
+    map.setPaintProperty('station-circles', 'circle-stroke-color', selectedStationId
+      ? ['case', ['==', ['get', 'id'], selectedStationId], '#f59e0b', defaultStroke]
+      : defaultStroke,
+    );
+
+    // Fly to the station
+    if (selectedStationId) {
+      const station = stations.find((s) => s.id === selectedStationId);
+      if (station) {
+        map.flyTo({ center: [station.longitude, station.latitude], zoom: 15 });
+      }
+    }
+  }, [selectedStationId, stations, loaded, isDark]);
 
   // Switch map style when theme changes
   useEffect(() => {
@@ -289,7 +362,7 @@ export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMa
       <button
         type="button"
         onClick={handleLocateMe}
-        className="absolute end-3 bottom-24 z-10 flex size-10 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-colors md:bottom-6"
+        className="absolute end-4 bottom-24 z-10 flex size-10 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-colors md:bottom-14"
         aria-label="Locate me"
       >
         <Locate className="size-5" />

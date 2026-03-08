@@ -34,7 +34,7 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
     const timer = setTimeout(() => {
       const el = document.querySelector(`[data-station-id="${selectedStationId}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 100);
+    }, 350);
 
     return () => clearTimeout(timer);
   }, [selectedStationId]);

@@ -2,7 +2,7 @@
   "common": {
     "appName": "Benzina",
     "tagline": "Find gas stations across Lebanon",
-    "searchPlaceholder": "Search stations, brands...",
+    "searchPlaceholder": "Search stations",
     "allFuels": "All Fuels",
     "stationsNearby": "{count} stations nearby",
     "sortNearest": "Nearest",

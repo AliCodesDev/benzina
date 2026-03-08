@@ -16,5 +16,5 @@ export const BRAND_COLORS: Record<string, string> = {
   default: '#94a3b8',
 };
 export const FUEL_TYPES = ['95', '98', 'diesel', 'lpg'] as const;
-export const RADIUS_OPTIONS = [1, 3, 5, 10, 25] as const;
+export const RADIUS_OPTIONS = [1, 3, 5] as const;
 export const LBP_USD_RATE = 89500; // approximate, update as needed

@@ -3,7 +3,7 @@ import { join } from "path";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 const OVERPASS_QUERY = `[out:json][timeout:60];
-node["amenity"="fuel"](33.82,35.43,33.95,35.58);
+node["amenity"="fuel"](33.05,35.10,34.70,36.65);
 out body;`;
 
 const FUEL_KEYS = [

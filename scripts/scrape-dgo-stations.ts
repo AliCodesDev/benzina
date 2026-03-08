@@ -5,12 +5,12 @@ import { join } from "path";
 
 const DGO_URL = "https://dgo.gov.lb/petrol-station-map/";
 
-// Greater Beirut bounding box
-const BEIRUT_BOUNDS = {
-  latMin: 33.82,
-  latMax: 33.95,
-  lngMin: 35.43,
-  lngMax: 35.58,
+// Lebanon bounding box
+const LEBANON_BOUNDS = {
+  latMin: 33.05,
+  latMax: 34.70,
+  lngMin: 35.10,
+  lngMax: 36.65,
 };
 
 interface DgoStation {
@@ -106,12 +106,12 @@ function parseStation(tuple: LocationTuple, index: number): DgoStation | null {
   }
 }
 
-function isInGreaterBeirut(station: DgoStation): boolean {
+function isInLebanon(station: DgoStation): boolean {
   return (
-    station.latitude >= BEIRUT_BOUNDS.latMin &&
-    station.latitude <= BEIRUT_BOUNDS.latMax &&
-    station.longitude >= BEIRUT_BOUNDS.lngMin &&
-    station.longitude <= BEIRUT_BOUNDS.lngMax
+    station.latitude >= LEBANON_BOUNDS.latMin &&
+    station.latitude <= LEBANON_BOUNDS.latMax &&
+    station.longitude >= LEBANON_BOUNDS.lngMin &&
+    station.longitude <= LEBANON_BOUNDS.lngMax
   );
 }
 
@@ -138,8 +138,8 @@ async function main() {
     }
   }
 
-  // Filter to Greater Beirut
-  const filtered = allStations.filter(isInGreaterBeirut);
+  // Filter to Lebanon
+  const filtered = allStations.filter(isInLebanon);
 
   // Write output
   const outDir = join(new URL("..", import.meta.url).pathname, "data");
@@ -152,7 +152,7 @@ async function main() {
   console.log(`Total locations from DGO: ${locations.length}`);
   console.log(`Successfully parsed: ${allStations.length}`);
   console.log(`Parse errors: ${errors}`);
-  console.log(`Filtered (Greater Beirut): ${filtered.length}`);
+  console.log(`Filtered (Lebanon): ${filtered.length}`);
   console.log(`Written to: ${outPath}`);
 }
 

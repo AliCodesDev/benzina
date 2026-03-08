@@ -7,7 +7,6 @@ import { MapPin, RefreshCw, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 import { FilterBar } from '@/components/filters/filter-bar';
-import { SortToggle } from '@/components/filters/sort-toggle';
 import { StationList } from '@/components/station/station-list';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -21,27 +20,20 @@ import { useStations } from '@/hooks/use-stations';
 import { cn } from '@/lib/utils';
 import { useFilterStore } from '@/stores/use-filter-store';
 import { useMapStore } from '@/stores/use-map-store';
-import { usePreferencesStore } from '@/stores/use-preferences-store';
 
 export default function HomePage() {
   const t = useTranslations('common');
   const { latitude, longitude, error: geoError, refresh: refreshGeo } = useGeolocation();
-  const fuelTypes = useFilterStore((s) => s.fuelTypes);
   const radius = useFilterStore((s) => s.radius);
   const searchQuery = useFilterStore((s) => s.searchQuery);
   const brand = useFilterStore((s) => s.brand);
-  const sort = useFilterStore((s) => s.sort);
-  const preferredFuels = usePreferencesStore((s) => s.preferredFuels);
-
   const { stations, count, loading, error, refetch } = useStations({
     lat: latitude,
     lng: longitude,
     radius,
-    fuelTypes,
+    fuelTypes: [],
     brand,
     searchQuery,
-    sort,
-    preferredFuel: preferredFuels[0] ?? null,
   });
 
   const selectedStationId = useMapStore((s) => s.selectedStationId);
@@ -118,12 +110,6 @@ export default function HomePage() {
               onDismiss={() => setBannerDismissed(true)}
             />
           )}
-          <div className="flex items-center justify-between px-4 py-2">
-            <span className="text-xs text-muted-foreground">
-              {t('stationsNearby', { count })}
-            </span>
-            <SortToggle />
-          </div>
           <div className="flex-1 overflow-y-auto px-4 pb-4">
             <StationList stations={stations} loading={loading} error={error} onRetry={refetch} />
           </div>
@@ -171,12 +157,6 @@ export default function HomePage() {
                 onDismiss={() => setBannerDismissed(true)}
               />
             )}
-            <div className="flex items-center justify-between px-4 py-1">
-              <span className="text-xs text-muted-foreground">
-                {t('stationsNearby', { count })}
-              </span>
-              <SortToggle />
-            </div>
             <div className="flex-1 overflow-y-auto px-4 pb-[calc(1rem+env(safe-area-inset-bottom)+60px)]">
               <StationList stations={stations} loading={loading} error={error} onRetry={refetch} />
             </div>

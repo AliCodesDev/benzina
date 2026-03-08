@@ -10,7 +10,7 @@
     "sortName": "Name",
     "noStations": "No stations found for these filters",
     "expandSearch": "Try expanding your radius or removing fuel filters",
-    "expandTo10km": "Expand to 10 km",
+    "expandTo5km": "Expand to 5 km",
     "locationUnavailable": "Location unavailable. Showing stations near central Beirut.",
     "locateMe": "Locate me",
     "loading": "Loading...",

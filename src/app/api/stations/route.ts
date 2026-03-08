@@ -5,7 +5,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { BEIRUT_CENTER, DEFAULT_RADIUS_KM } from '@/lib/constants';
 import { rankStations } from '@/lib/ranking';
 
-const DEFAULT_LIMIT = 50;
+const DEFAULT_LIMIT = 100;
 const ARABIC_REGEX = /[\u0600-\u06FF]/;
 
 type NearbyRow = {

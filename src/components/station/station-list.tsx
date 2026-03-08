@@ -58,8 +58,8 @@ export function StationList({ stations, loading, error, onRetry }: StationListPr
       <EmptyState
         message={t('noStations')}
         suggestion={t('expandSearch')}
-        actionLabel={t('expandTo10km')}
-        onAction={() => setRadius(10)}
+        actionLabel={t('expandTo5km')}
+        onAction={() => setRadius(5)}
       />
     );
   }

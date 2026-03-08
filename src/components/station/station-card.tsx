@@ -3,10 +3,9 @@
 import { ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { FuelBadge } from '@/components/station/fuel-badge';
 import { BRAND_COLORS } from '@/lib/constants';
 import { cn, formatDistance } from '@/lib/utils';
-import type { FuelType, NearbyStation } from '@/types/station';
+import type { NearbyStation } from '@/types/station';
 
 interface StationCardProps {
   station: NearbyStation;
@@ -52,17 +51,6 @@ export function StationCard({ station, isSelected, onClick }: StationCardProps) 
               {address}
             </p>
           )}
-
-          <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-            {station.fuel_types.map((type) => (
-              <FuelBadge key={type} fuelType={type as FuelType} />
-            ))}
-            {station.is_24h && (
-              <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                24h
-              </span>
-            )}
-          </div>
 
           {isSelected && (
             <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1 font-medium">

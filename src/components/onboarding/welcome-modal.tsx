@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Fuel } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
@@ -14,33 +15,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePreferencesStore } from "@/stores/use-preferences-store";
 import { cn } from "@/lib/utils";
-import type { FuelType } from "@/types/station";
 
-const FUEL_OPTIONS: FuelType[] = ["95", "98", "diesel", "lpg"];
-const RADIUS_OPTIONS = [1, 3, 5, 10] as const;
+const RADIUS_OPTIONS = [1, 3, 5] as const;
 
 export function WelcomeModal() {
   const router = useRouter();
   const t = useTranslations("welcome");
-  const tFuel = useTranslations("fuel");
-  const { hasCompletedOnboarding, setLocale, setPreferredFuels, setDefaultRadius, completeOnboarding } =
+  const { hasCompletedOnboarding, setLocale, setDefaultRadius, completeOnboarding } =
     usePreferencesStore();
 
   const [selectedLocale, setSelectedLocale] = useState<"en" | "ar">("en");
-  const [selectedFuels, setSelectedFuels] = useState<FuelType[]>([]);
   const [selectedRadius, setSelectedRadius] = useState(5);
 
   if (hasCompletedOnboarding) return null;
 
-  function toggleFuel(fuel: FuelType) {
-    setSelectedFuels((prev) =>
-      prev.includes(fuel) ? prev.filter((f) => f !== fuel) : [...prev, fuel]
-    );
-  }
-
   function handleSubmit() {
     setLocale(selectedLocale);
-    setPreferredFuels(selectedFuels);
     setDefaultRadius(selectedRadius);
     completeOnboarding();
 
@@ -62,7 +52,7 @@ export function WelcomeModal() {
           <div className="flex size-14 items-center justify-center rounded-full bg-primary/10">
             <Fuel className="size-7 text-primary" />
           </div>
-          <DialogTitle className="font-[family-name:var(--font-instrument-serif)] text-2xl italic">
+          <DialogTitle className="font-[family-name:var(--font-instrument-serif)] text-2xl">
             {t("title")}
           </DialogTitle>
           <DialogDescription>
@@ -91,30 +81,6 @@ export function WelcomeModal() {
                   )}
                 >
                   {lang.label}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-
-          {/* Fuel type selection */}
-          <fieldset>
-            <legend className="mb-2 text-sm font-medium">
-              {t("fuelPreference")}
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {FUEL_OPTIONS.map((fuel) => (
-                <button
-                  key={fuel}
-                  type="button"
-                  onClick={() => toggleFuel(fuel)}
-                  className={cn(
-                    "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                    selectedFuels.includes(fuel)
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background hover:bg-muted"
-                  )}
-                >
-                  {tFuel(fuel)}
                 </button>
               ))}
             </div>

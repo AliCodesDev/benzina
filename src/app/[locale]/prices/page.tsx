@@ -74,7 +74,7 @@ export default async function PricesPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 pb-24 space-y-6">
-      <h1 className="text-2xl md:text-3xl font-[family-name:var(--font-instrument-serif)] italic">
+      <h1 className="text-2xl md:text-3xl font-[family-name:var(--font-instrument-serif)]">
         {t('title')}
       </h1>
 

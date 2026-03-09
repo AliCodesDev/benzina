@@ -50,7 +50,7 @@ export default function AdminDashboard() {
         // Count by brand
         const brandMap: Record<string, number> = {};
         for (const s of stations) {
-          const brand = s.brand || 'Unknown';
+          const brand = s.brand || 'Independent';
           brandMap[brand] = (brandMap[brand] || 0) + 1;
         }
         const brandCounts = Object.entries(brandMap)

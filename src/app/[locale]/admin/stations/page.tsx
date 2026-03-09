@@ -139,7 +139,7 @@ export default function AdminStationsPage() {
                     {station.name_en}
                   </TableCell>
                   <TableCell className="capitalize">
-                    {station.brand || '—'}
+                    {station.brand || 'Independent'}
                   </TableCell>
                   <TableCell>
                     <Badge variant={statusVariant(station.status)}>

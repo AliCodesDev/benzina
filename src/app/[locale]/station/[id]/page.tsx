@@ -10,7 +10,6 @@ import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-import { FuelBadge } from '@/components/station/fuel-badge';
 import { NavigateButton } from '@/components/station/navigate-button';
 import { ShareButton } from '@/components/station/share-button';
 import { Badge } from '@/components/ui/badge';
@@ -177,7 +176,7 @@ export default async function StationDetailPage({ params }: PageProps) {
           </div>
 
           {/* Station name */}
-          <h1 className="text-2xl md:text-3xl font-[family-name:var(--font-instrument-serif)] italic leading-tight">
+          <h1 className="text-2xl md:text-3xl font-[family-name:var(--font-instrument-serif)] leading-tight">
             {name}
           </h1>
 
@@ -196,13 +195,6 @@ export default async function StationDetailPage({ params }: PageProps) {
                   : t('closed')}
             </span>
           </div>
-        </div>
-
-        {/* Fuel type badges */}
-        <div className="flex flex-wrap gap-2">
-          {station.fuel_types.map((type) => (
-            <FuelBadge key={type} fuelType={type as FuelType} />
-          ))}
         </div>
 
         {/* Action buttons */}

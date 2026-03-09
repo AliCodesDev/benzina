@@ -184,7 +184,7 @@ export function SearchInput() {
               >
                 <p className="font-medium truncate">{name}</p>
                 <p className="text-xs text-muted-foreground truncate">
-                  {[s.brand, address].filter(Boolean).join(' · ')}
+                  {[s.brand || 'Independent', address].filter(Boolean).join(' · ')}
                 </p>
               </li>
             );

@@ -19,12 +19,12 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white dark:bg-neutral-950">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-xl font-[var(--font-instrument-serif)] italic">
+      <div className="flex items-center justify-between px-4 py-2.5">
+        <Link href="/" className="text-xl font-[var(--font-instrument-serif)]">
           Benzina
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <Button variant="ghost" size="icon" className="size-8" asChild aria-label="Fuel prices">
             <Link href="/prices">
               <DollarSign className="size-4" />
@@ -36,11 +36,12 @@ export function Header() {
             </Link>
           </Button>
 
-          <div className="h-4 w-px bg-border mx-1" />
+          <div className="h-4 w-px bg-border mx-0.5" />
 
           <Button
             variant={locale === "en" ? "default" : "ghost"}
             size="sm"
+            className="h-8 px-3 text-xs"
             onClick={() => switchLocale("en")}
           >
             EN
@@ -48,6 +49,7 @@ export function Header() {
           <Button
             variant={locale === "ar" ? "default" : "ghost"}
             size="sm"
+            className="h-8 px-3 text-xs"
             onClick={() => switchLocale("ar")}
           >
             ع

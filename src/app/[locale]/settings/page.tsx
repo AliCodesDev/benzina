@@ -16,23 +16,17 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { usePreferencesStore } from "@/stores/use-preferences-store";
 import { cn } from "@/lib/utils";
-import type { FuelType } from "@/types/station";
-
-const FUEL_OPTIONS: FuelType[] = ["95", "98", "diesel", "lpg"];
-const RADIUS_OPTIONS = [1, 3, 5, 10, 25] as const;
+const RADIUS_OPTIONS = [1, 3, 5] as const;
 
 export default function SettingsPage() {
   const router = useRouter();
   const currentLocale = useLocale();
   const t = useTranslations("settings");
-  const tFuel = useTranslations("fuel");
   const {
-    preferredFuels,
     defaultRadius,
     currency,
     theme,
     setLocale,
-    setPreferredFuels,
     setDefaultRadius,
     setCurrency,
     setTheme,
@@ -43,13 +37,6 @@ export default function SettingsPage() {
     router.push(`/${locale}/settings`);
   }
 
-  function toggleFuel(fuel: FuelType) {
-    const next = preferredFuels.includes(fuel)
-      ? preferredFuels.filter((f) => f !== fuel)
-      : [...preferredFuels, fuel];
-    setPreferredFuels(next);
-  }
-
   function handleReset() {
     localStorage.removeItem("benzina-preferences");
     window.location.reload();
@@ -57,7 +44,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6 pb-24 space-y-6">
-      <h1 className="text-2xl font-[family-name:var(--font-instrument-serif)] italic">
+      <h1 className="text-2xl font-[family-name:var(--font-instrument-serif)]">
         {t("title")}
       </h1>
 
@@ -90,54 +77,26 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Fuel & Radius */}
+      {/* Radius */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("searchPreferences")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>{t("fuelPreference")}</Label>
-            <div className="flex flex-wrap gap-2">
-              {FUEL_OPTIONS.map((fuel) => (
-                <button
-                  key={fuel}
-                  type="button"
-                  onClick={() => toggleFuel(fuel)}
-                  className={cn(
-                    "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                    preferredFuels.includes(fuel)
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background hover:bg-muted"
-                  )}
-                >
-                  {tFuel(fuel)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-2">
-            <Label>{t("defaultRadius")}</Label>
-            <div className="flex flex-wrap gap-2">
-              {RADIUS_OPTIONS.map((radius) => (
-                <button
-                  key={radius}
-                  type="button"
-                  onClick={() => setDefaultRadius(radius)}
-                  className={cn(
-                    "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                    defaultRadius === radius
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background hover:bg-muted"
-                  )}
-                >
-                  {radius} km
-                </button>
-              ))}
-            </div>
+        <CardContent className="flex items-center justify-between pt-6">
+          <Label className="text-base font-semibold">{t("defaultRadius")}</Label>
+          <div className="flex gap-2">
+            {RADIUS_OPTIONS.map((radius) => (
+              <button
+                key={radius}
+                type="button"
+                onClick={() => setDefaultRadius(radius)}
+                className={cn(
+                  "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                  defaultRadius === radius
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background hover:bg-muted"
+                )}
+              >
+                {radius} km
+              </button>
+            ))}
           </div>
         </CardContent>
       </Card>

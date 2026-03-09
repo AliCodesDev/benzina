@@ -4,7 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import {
   DM_Sans,
   IBM_Plex_Sans_Arabic,
-  Instrument_Serif,
+  DM_Serif_Display,
 } from "next/font/google";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
@@ -20,7 +20,7 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
 });
 
-const instrumentSerif = Instrument_Serif({
+const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-instrument-serif",
@@ -88,7 +88,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={isArabic ? "rtl" : "ltr"}>
       <body
-        className={`${fontClass} ${instrumentSerif.variable} font-sans antialiased`}
+        className={`${fontClass} ${dmSerifDisplay.variable} font-sans antialiased`}
       >
         <NextIntlClientProvider>
           <ThemeProvider>

@@ -32,7 +32,7 @@ export function PriceTicker() {
   const tickerContent = items.join('  \u00B7  ');
 
   return (
-    <div className="bg-slate-900 text-amber-400 overflow-hidden h-8 flex items-center text-sm font-medium">
+    <div className="bg-[oklch(0.145_0_0)] text-amber-400 overflow-hidden h-8 flex items-center text-sm font-medium">
       <div className="animate-ticker flex whitespace-nowrap">
         <span className="px-4">{tickerContent}</span>
         <span className="px-4">{tickerContent}</span>

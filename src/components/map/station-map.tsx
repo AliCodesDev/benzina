@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Locate } from 'lucide-react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { MAPBOX_STYLE, MAPBOX_STYLE_DARK } from '@/lib/constants';
+import { BEIRUT_CENTER, MAPBOX_STYLE, MAPBOX_STYLE_DARK } from '@/lib/constants';
 import { useFilterStore } from '@/stores/use-filter-store';
 import { useMapStore } from '@/stores/use-map-store';
 import { usePreferencesStore } from '@/stores/use-preferences-store';
@@ -165,6 +165,7 @@ export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMa
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const hasCenteredOnUser = useRef(false);
   const isDark = useIsDark();
 
   const radius = useFilterStore((s) => s.radius);
@@ -234,6 +235,20 @@ export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMa
     // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-center on user location once geolocation resolves
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded || hasCenteredOnUser.current) return;
+
+    const isDefault =
+      userLat === BEIRUT_CENTER.lat && userLng === BEIRUT_CENTER.lng;
+    if (isDefault) return;
+
+    hasCenteredOnUser.current = true;
+    map.flyTo({ center: [userLng, userLat], zoom: 14 });
+    flyTo(userLat, userLng, 14);
+  }, [userLat, userLng, loaded, flyTo]);
 
   // Update stations data when prop changes
   useEffect(() => {

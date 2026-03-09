@@ -164,7 +164,7 @@ export default function SettingsPage() {
         </p>
         <p>{t("dataSource")}</p>
         <a
-          href="https://github.com/nicolo/benzina"
+          href="https://github.com/AliCodesDev/benzina"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 underline underline-offset-4 hover:text-foreground"

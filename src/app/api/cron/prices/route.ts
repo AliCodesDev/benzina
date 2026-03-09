@@ -4,12 +4,18 @@ import { createAdminClient } from '@/lib/supabase/admin';
 
 const TOTAL_PRICING_URL = 'https://pricing.totalenergies.com.lb/fuelprice/';
 
+// HTML structure per fuel type:
+//   <div id="v1">1957000</div>
+//   <div id="id1">excellium-unleaded-98</div>
+// The price is in a hidden div, followed by the fuel identifier in the next div.
 const FUEL_PATTERNS: { key: string; regex: RegExp; unit: string }[] = [
-  { key: '95', regex: /excellium-unleaded-95[\s\S]*?(\d{4,})/i, unit: '20L' },
-  { key: '98', regex: /excellium-unleaded-98[\s\S]*?(\d{4,})/i, unit: '20L' },
-  { key: 'diesel', regex: /class="diesel"[\s\S]*?(\d{4,})/i, unit: '20L' },
-  { key: 'lpg', regex: /class="gasoil"[\s\S]*?(\d{4,})/i, unit: '10kg' },
+  { key: '95', regex: /id="v\d+">(\d+)<\/div>\s*<div[^>]*>excellium-unleaded-95</i, unit: '20L' },
+  { key: '98', regex: /id="v\d+">(\d+)<\/div>\s*<div[^>]*>excellium-unleaded-98</i, unit: '20L' },
+  { key: 'diesel', regex: /id="v\d+">(\d+)<\/div>\s*<div[^>]*>diesel</i, unit: '20L' },
+  { key: 'lpg', regex: /id="v\d+">(\d+)<\/div>\s*<div[^>]*>gasoil</i, unit: '10kg' },
 ];
+
+const MIN_VALID_PRICE = 100_000; // Sanity check: no fuel price should be under 100,000 LBP
 
 function parsePrice(raw: string): number {
   return parseInt(raw.replace(/,/g, ''), 10);
@@ -46,7 +52,7 @@ export async function GET(request: NextRequest) {
       const match = html.match(regex);
       if (match) {
         const price = parsePrice(match[1]);
-        if (price > 0) {
+        if (price >= MIN_VALID_PRICE) {
           prices.push({ fuel_type: key, price_lbp: price, price_unit: unit });
         }
       }

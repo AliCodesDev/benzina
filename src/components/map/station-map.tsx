@@ -362,7 +362,7 @@ export function StationMap({ stations, userLat, userLng, onLocateMe }: StationMa
       <button
         type="button"
         onClick={handleLocateMe}
-        className="absolute end-4 bottom-24 z-10 flex size-10 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-colors md:bottom-14"
+        className="absolute end-4 bottom-[28dvh] z-10 flex size-10 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-colors md:bottom-14"
         aria-label="Locate me"
       >
         <Locate className="size-5" />
